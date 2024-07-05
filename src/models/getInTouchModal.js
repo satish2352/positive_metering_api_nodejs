@@ -8,6 +8,7 @@ function getAllRecords(callback) {
     }
 }
 
+
 function createRecord(recordData, callback) {
     try {
         db.query('INSERT INTO getInTouch SET ?', recordData, callback);
