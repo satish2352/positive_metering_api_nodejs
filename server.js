@@ -45,3 +45,7 @@ const init = async () => {
 };
 
 init();
+
+app.get("/", (req, res) => {
+  res.send("server start");
+});
