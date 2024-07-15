@@ -17,7 +17,9 @@ const carrousalRoutes = require('./routes/carrousalRoutes');
 const homeSliderRoutes = require('./routes/homeSliderRoutes');
 const uploadCVRoutes = require('./routes/uploadCVRoutes');
 const contactPersonRoutes = require('./routes/contactPersonRoutes');
+const officeRoutes = require('./routes/officeRoutes');
 
+app.use('/office', officeRoutes);
 app.use('/contactperson', contactPersonRoutes);
 app.use("/auth", authRoutes);
 app.use("/header-contact", headerContactRoutes);
