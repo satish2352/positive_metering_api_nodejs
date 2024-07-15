@@ -5,6 +5,7 @@ const authRoutes = require("./routes/authRoutes");
 const headerContactRoutes = require("./routes/headerContactRoutes");
 const testimonialRoutes = require("./routes/testimonialRoutes");
 const infrastructureRoutes = require("./routes/infrastructureRoute");
+const carrousalRoutes = require('./routes/carrousalRoutes');
 const app = express();
 const fs = require("fs");
 const path = require("path");
@@ -17,7 +18,7 @@ app.use("/auth", authRoutes);
 app.use("/header-contact", headerContactRoutes);
 app.use("/testimonials", testimonialRoutes);
 app.use("/infrastructure", infrastructureRoutes);
-
+app.use('/carrousal', carrousalRoutes);
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
