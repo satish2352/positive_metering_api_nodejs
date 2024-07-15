@@ -1,19 +1,20 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const sequelize = require('./config/database');
-const authRoutes = require('./routes/authRoutes');
-const headerContactRoutes = require('./routes/headerContactRoutes')
-const testimonialRoutes = require('./routes/testimonialRoutes');
+const express = require("express");
+const bodyParser = require("body-parser");
+const sequelize = require("./config/database");
+const authRoutes = require("./routes/authRoutes");
+const headerContactRoutes = require("./routes/headerContactRoutes");
+const testimonialRoutes = require("./routes/testimonialRoutes");
 const app = express();
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 const port = process.env.PORT || 8000;
-
+const cors = require("cors");
+app.use(cors());
 app.use(bodyParser.json());
-app.use('/uploads', express.static('uploads'));
-app.use('/auth', authRoutes);
-app.use('/header-contact', headerContactRoutes);
-app.use('/testimonials', testimonialRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/auth", authRoutes);
+app.use("/header-contact", headerContactRoutes);
+app.use("/testimonials", testimonialRoutes);
 
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -29,10 +30,10 @@ app.use((err, req, res, next) => {
 const testDbConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log('Database connected...');
+    console.log("Database connected...");
     await sequelize.sync(); // Ensure the database and model are in sync
   } catch (err) {
-    console.error('Error: ' + err);
+    console.error("Error: " + err);
   }
 };
 
