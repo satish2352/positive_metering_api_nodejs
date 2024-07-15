@@ -4,6 +4,7 @@ const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const headerContactRoutes = require("./routes/headerContactRoutes");
 const testimonialRoutes = require("./routes/testimonialRoutes");
+const infrastructureRoutes = require("./routes/infrastructureRoute");
 const app = express();
 const fs = require("fs");
 const path = require("path");
@@ -15,6 +16,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/auth", authRoutes);
 app.use("/header-contact", headerContactRoutes);
 app.use("/testimonials", testimonialRoutes);
+app.use("/infrastructure", infrastructureRoutes);
 
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {
