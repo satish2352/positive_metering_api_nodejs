@@ -21,7 +21,9 @@ const officeRoutes = require('./routes/officeRoutes');
 const carousalFormRoutes = require('./routes/carousalFormRoutes');
 const requestCallbackFormRoutes = require('./routes/requestCallbackFormRoutes');
 const subscribeRoutes = require('./routes/subscribeRoutes');
+const getInTouchRoutes = require('./routes/getInTouchRoutes');
 
+app.use('/getintouch', getInTouchRoutes);
 app.use('/subscribe', subscribeRoutes);
 app.use('/requestcallbackform', requestCallbackFormRoutes);
 app.use('/carousal-form', carousalFormRoutes);
