@@ -19,7 +19,11 @@ const uploadCVRoutes = require('./routes/uploadCVRoutes');
 const contactPersonRoutes = require('./routes/contactPersonRoutes');
 const officeRoutes = require('./routes/officeRoutes');
 const carousalFormRoutes = require('./routes/carousalFormRoutes');
+const requestCallbackFormRoutes = require('./routes/requestCallbackFormRoutes');
+const subscribeRoutes = require('./routes/subscribeRoutes');
 
+app.use('/subscribe', subscribeRoutes);
+app.use('/requestcallbackform', requestCallbackFormRoutes);
 app.use('/carousal-form', carousalFormRoutes);
 app.use('/office', officeRoutes);
 app.use('/contactperson', contactPersonRoutes);
