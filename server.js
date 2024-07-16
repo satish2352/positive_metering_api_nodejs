@@ -23,7 +23,13 @@ const requestCallbackFormRoutes = require('./routes/requestCallbackFormRoutes');
 const subscribeRoutes = require('./routes/subscribeRoutes');
 const getInTouchRoutes = require('./routes/getInTouchRoutes');
 const productNameRoutes = require('./routes/productNameRoutes');
+const productDetailsRoutes = require('./routes/productDetailsRoutes');
+const technicalDataRoutes = require('./routes/technicalDataRoutes');
+const optionsDataRoutes = require('./routes/optionsDataRoutes');
+const materialDataRoutes = require('./routes/materialDataRoutes');
+const productAggregateRoutes = require('./routes/productAggregateRoutes');
 
+app.use('/productdetails', productDetailsRoutes);
 app.use('/productname', productNameRoutes);
 app.use('/getintouch', getInTouchRoutes);
 app.use('/subscribe', subscribeRoutes);
@@ -38,6 +44,11 @@ app.use("/infrastructure", infrastructureRoutes);
 app.use('/carrousal', carrousalRoutes);
 app.use('/homeslider', homeSliderRoutes);
 app.use('/uploadcv', uploadCVRoutes);
+app.use('/technicalData', technicalDataRoutes);
+app.use('/optionsData', optionsDataRoutes);
+app.use('/materialData', materialDataRoutes);
+app.use('/productAggregate', productAggregateRoutes);
+
 // Global Error Handling Middleware
 // app.use((err, req, res, next) => {
 //   if (err instanceof multer.MulterError) {
