@@ -1,24 +1,28 @@
 // controllers/optionsDataController.js
-const OptionsData = require('../models/OptionsData');
-const apiResponse = require('../helper/apiResponse');
+const OptionsData = require("../models/OptionsData");
+const apiResponse = require("../helper/apiResponse");
+const ProductDetails = require('../models/ProductDetails');
 
 exports.addOptionsData = async (req, res) => {
   try {
-    const { productId, optionsDescription } = req.body;
-
+    const { productName, optionsDescription } = req.body;
+    const product = await ProductDetails.findOne({ where: { productName } });
+    if (!product) {
+      return apiResponse.notFoundResponse(res, "Product not found");
+    }
     const optionsData = await OptionsData.create({
-      productId,
+      productId: product.id,
       optionsDescription,
     });
 
     return apiResponse.successResponseWithData(
       res,
-      'Options data added successfully',
+      "Options data added successfully",
       optionsData
     );
   } catch (error) {
-    console.error('Add options data failed', error);
-    return apiResponse.ErrorResponse(res, 'Add options data failed');
+    console.error("Add options data failed", error);
+    return apiResponse.ErrorResponse(res, "Add options data failed");
   }
 };
 
@@ -29,7 +33,7 @@ exports.updateOptionsData = async (req, res) => {
 
     const optionsData = await OptionsData.findByPk(id);
     if (!optionsData) {
-      return apiResponse.notFoundResponse(res, 'Options data not found');
+      return apiResponse.notFoundResponse(res, "Options data not found");
     }
 
     optionsData.optionsDescription = optionsDescription;
@@ -37,12 +41,12 @@ exports.updateOptionsData = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      'Options data updated successfully',
+      "Options data updated successfully",
       optionsData
     );
   } catch (error) {
-    console.error('Update options data failed', error);
-    return apiResponse.ErrorResponse(res, 'Update options data failed');
+    console.error("Update options data failed", error);
+    return apiResponse.ErrorResponse(res, "Update options data failed");
   }
 };
 
@@ -53,11 +57,11 @@ exports.getOptionsData = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      'Options data retrieved successfully',
+      "Options data retrieved successfully",
       optionsData
     );
   } catch (error) {
-    console.error('Get options data failed', error);
-    return apiResponse.ErrorResponse(res, 'Get options data failed');
+    console.error("Get options data failed", error);
+    return apiResponse.ErrorResponse(res, "Get options data failed");
   }
 };

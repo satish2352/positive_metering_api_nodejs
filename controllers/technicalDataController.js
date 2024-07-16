@@ -1,26 +1,43 @@
 // controllers/technicalDataController.js
+const ProductDetails = require('../models/ProductDetails');
 const TechnicalData = require('../models/TechnicalData');
 const apiResponse = require('../helper/apiResponse');
 
 exports.addTechnicalData = async (req, res) => {
   try {
-    const { productId, technicalDescription } = req.body;
+    const { productName, technicalDescription } = req.body;
 
+    // Find the product by productName
+    const product = await ProductDetails.findOne({ where: { productName } });
+    if (!product) {
+      console.error('Product not found for productName:', productName);
+      return apiResponse.notFoundResponse(res, 'Product not found');
+    }
+
+    // Create the technical data entry
     const technicalData = await TechnicalData.create({
-      productId,
+      productId: product.id,
       technicalDescription,
     });
 
+    // Return success response with data
     return apiResponse.successResponseWithData(
       res,
       'Technical data added successfully',
       technicalData
     );
   } catch (error) {
-    console.error('Add technical data failed', error);
+    console.error('Add technical data failed:', error);
+
+    // Check if the error is a validation error or something else
+    if (error.name === 'SequelizeValidationError') {
+      return apiResponse.ErrorResponse(res, 'Validation error: ' + error.message);
+    }
+
     return apiResponse.ErrorResponse(res, 'Add technical data failed');
   }
 };
+
 
 exports.updateTechnicalData = async (req, res) => {
   try {
