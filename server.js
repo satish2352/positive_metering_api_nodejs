@@ -28,7 +28,9 @@ const technicalDataRoutes = require('./routes/technicalDataRoutes');
 const optionsDataRoutes = require('./routes/optionsDataRoutes');
 const materialDataRoutes = require('./routes/materialDataRoutes');
 const productAggregateRoutes = require('./routes/productAggregateRoutes');
+const blogDetailRoutes = require('./routes/blogDetailRoutes');
 
+app.use('/blogdetails', blogDetailRoutes);
 app.use('/productdetails', productDetailsRoutes);
 app.use('/productname', productNameRoutes);
 app.use('/getintouch', getInTouchRoutes);
