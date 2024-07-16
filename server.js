@@ -30,7 +30,9 @@ const materialDataRoutes = require('./routes/materialDataRoutes');
 const productAggregateRoutes = require('./routes/productAggregateRoutes');
 const blogDetailRoutes = require('./routes/blogDetailRoutes');
 const newsEventRoutes = require('./routes/newsEventRoutes');
+const teamRoutes = require('./routes/teamRoutes');
 
+app.use('/team', teamRoutes);
 app.use('/newsandevent', newsEventRoutes);
 app.use('/blogdetails', blogDetailRoutes);
 app.use('/productdetails', productDetailsRoutes);
