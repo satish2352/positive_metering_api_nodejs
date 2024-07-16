@@ -6,10 +6,11 @@ const {
   getMaterialData
 } = require('../controllers/materialDataController');
 const authenticateToken = require('../middleware/auth');
+const { validateMaterialData } = require('../validations/materialDataValidation');
 
 const router = express.Router();
 
-router.post('/create-materialdata', authenticateToken, addMaterialData);
+router.post('/create-materialdata', authenticateToken, validateMaterialData, addMaterialData);
 router.put('/update-materialdata/:id', authenticateToken, updateMaterialData);
 router.get('/get-materialdata/:productId', authenticateToken, getMaterialData);
 

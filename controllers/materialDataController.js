@@ -1,13 +1,20 @@
 // controllers/materialDataController.js
+const ProductDetails = require('../models/ProductDetails');
 const MaterialData = require('../models/MaterialData');
 const apiResponse = require('../helper/apiResponse');
 
 exports.addMaterialData = async (req, res) => {
   try {
-    const { productId, materialDescription } = req.body;
+    const { productName, materialDescription } = req.body;
+
+    // Find the product by productName
+    const product = await ProductDetails.findOne({ where: { productName } });
+    if (!product) {
+      return apiResponse.notFoundResponse(res, 'Product not found');
+    }
 
     const materialData = await MaterialData.create({
-      productId,
+      productId: product.id,
       materialDescription,
     });
 
@@ -21,6 +28,7 @@ exports.addMaterialData = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Add material data failed');
   }
 };
+
 
 exports.updateMaterialData = async (req, res) => {
   try {
