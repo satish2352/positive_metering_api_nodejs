@@ -22,7 +22,9 @@ const carousalFormRoutes = require('./routes/carousalFormRoutes');
 const requestCallbackFormRoutes = require('./routes/requestCallbackFormRoutes');
 const subscribeRoutes = require('./routes/subscribeRoutes');
 const getInTouchRoutes = require('./routes/getInTouchRoutes');
+const productNameRoutes = require('./routes/productNameRoutes');
 
+app.use('/productname', productNameRoutes);
 app.use('/getintouch', getInTouchRoutes);
 app.use('/subscribe', subscribeRoutes);
 app.use('/requestcallbackform', requestCallbackFormRoutes);
@@ -37,14 +39,14 @@ app.use('/carrousal', carrousalRoutes);
 app.use('/homeslider', homeSliderRoutes);
 app.use('/uploadcv', uploadCVRoutes);
 // Global Error Handling Middleware
-app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    return apiResponse.ErrorResponse(res, err.message);
-  } else if (err) {
-    return apiResponse.ErrorResponse(res, err.message);
-  }
-  next();
-});
+// app.use((err, req, res, next) => {
+//   if (err instanceof multer.MulterError) {
+//     return apiResponse.ErrorResponse(res, err.message);
+//   } else if (err) {
+//     return apiResponse.ErrorResponse(res, err.message);
+//   }
+//   next();
+// });
 
 // Test DB connection
 const testDbConnection = async () => {
