@@ -52,8 +52,7 @@ exports.updateOptionsData = async (req, res) => {
 
 exports.getOptionsData = async (req, res) => {
   try {
-    const { productId } = req.params;
-    const optionsData = await OptionsData.findAll({ where: { productId } });
+    const optionsData = await OptionsData.findAll();
 
     return apiResponse.successResponseWithData(
       res,
