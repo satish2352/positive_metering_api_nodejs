@@ -65,8 +65,8 @@ exports.updateTechnicalData = async (req, res) => {
 
 exports.getTechnicalData = async (req, res) => {
   try {
-    const { productId } = req.params;
-    const technicalData = await TechnicalData.findAll({ where: { productId } });
+  
+    const technicalData = await TechnicalData.findAll();
 
     return apiResponse.successResponseWithData(
       res,
@@ -76,5 +76,27 @@ exports.getTechnicalData = async (req, res) => {
   } catch (error) {
     console.error('Get technical data failed', error);
     return apiResponse.ErrorResponse(res, 'Get technical data failed');
+  }
+};
+exports.deleteTechnicalData = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the technical data entry by ID
+    const technicalData = await TechnicalData.findByPk(id);
+    if (!technicalData) {
+      return apiResponse.notFoundResponse(res, 'Technical data not found');
+    }
+
+    // Delete the technical data entry
+    await technicalData.destroy();
+
+    return apiResponse.successResponse(
+      res,
+      'Technical data deleted successfully'
+    );
+  } catch (error) {
+    console.error('Delete technical data failed', error);
+    return apiResponse.ErrorResponse(res, 'Delete technical data failed');
   }
 };

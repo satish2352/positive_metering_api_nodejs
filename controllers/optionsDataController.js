@@ -64,3 +64,20 @@ exports.getOptionsData = async (req, res) => {
     return apiResponse.ErrorResponse(res, "Get options data failed");
   }
 };
+exports.deleteOptionsData = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const optionsData = await OptionsData.findByPk(id);
+    if (!optionsData) {
+      return apiResponse.notFoundResponse(res, "Options data not found");
+    }
+
+    await optionsData.destroy();
+
+    return apiResponse.successResponse(res, "Options data deleted successfully");
+  } catch (error) {
+    console.error("Delete options data failed", error);
+    return apiResponse.ErrorResponse(res, "Delete options data failed");
+  }
+};

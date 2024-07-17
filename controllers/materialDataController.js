@@ -56,8 +56,8 @@ exports.updateMaterialData = async (req, res) => {
 
 exports.getMaterialData = async (req, res) => {
   try {
-    const { productId } = req.params;
-    const materialData = await MaterialData.findAll({ where: { productId } });
+  
+    const materialData = await MaterialData.findAll();
 
     return apiResponse.successResponseWithData(
       res,
@@ -67,5 +67,27 @@ exports.getMaterialData = async (req, res) => {
   } catch (error) {
     console.error('Get material data failed', error);
     return apiResponse.ErrorResponse(res, 'Get material data failed');
+  }
+};
+exports.deleteMaterialData = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the material data entry by ID
+    const materialData = await MaterialData.findByPk(id);
+    if (!materialData) {
+      return apiResponse.notFoundResponse(res, 'Material data not found');
+    }
+
+    // Delete the material data entry
+    await materialData.destroy();
+
+    return apiResponse.successResponse(
+      res,
+      'Material data deleted successfully'
+    );
+  } catch (error) {
+    console.error('Delete material data failed', error);
+    return apiResponse.ErrorResponse(res, 'Delete material data failed');
   }
 };
