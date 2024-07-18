@@ -59,7 +59,7 @@ exports.getHomeSlider = async (req, res) => {
     const homeSlider = await HomeSlider.findAll({ where: { isDelete: false } });
 
     // Base URL for images
-    const baseUrl = `${req.protocol}://${req.get("host")}/uploads/`;
+    const baseUrl = `${req.protocol}://${req.get("host")}/`;
 
     const homeSliderWithBaseUrl = homeSlider.map((homeSlider) => {
       return {
