@@ -11,6 +11,10 @@ const MaterialData = sequelize.define('MaterialData', {
       key: 'id'
     }
   },
+  productName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   materialDescription: {
     type: DataTypes.TEXT,
     allowNull: false,

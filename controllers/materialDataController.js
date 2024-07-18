@@ -15,6 +15,7 @@ exports.addMaterialData = async (req, res) => {
 
     const materialData = await MaterialData.create({
       productId: product.id,
+      productName,
       materialDescription,
     });
 
@@ -28,6 +29,7 @@ exports.addMaterialData = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Add material data failed');
   }
 };
+
 
 
 exports.updateMaterialData = async (req, res) => {
@@ -56,7 +58,6 @@ exports.updateMaterialData = async (req, res) => {
 
 exports.getMaterialData = async (req, res) => {
   try {
-  
     const materialData = await MaterialData.findAll();
 
     return apiResponse.successResponseWithData(
@@ -69,6 +70,8 @@ exports.getMaterialData = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Get material data failed');
   }
 };
+
+
 exports.deleteMaterialData = async (req, res) => {
   try {
     const { id } = req.params;

@@ -13,6 +13,7 @@ exports.addOptionsData = async (req, res) => {
     const optionsData = await OptionsData.create({
       productId: product.id,
       optionsDescription,
+      productName
     });
 
     return apiResponse.successResponseWithData(

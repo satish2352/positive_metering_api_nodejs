@@ -10,7 +10,10 @@ const OptionsData = sequelize.define('OptionsData', {
       model: 'ProductDetails',
       key: 'id'
     }
-  },
+  },productName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }, 
   optionsDescription: {
     type: DataTypes.TEXT,
     allowNull: false,
