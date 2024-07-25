@@ -16,6 +16,10 @@ const HomeSlider = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    view: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     timestamps: true,

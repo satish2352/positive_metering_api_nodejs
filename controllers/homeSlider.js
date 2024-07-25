@@ -7,12 +7,14 @@ exports.addHomeSlider = async (req, res) => {
       return apiResponse.ErrorResponse(res, "Image is required");
     }
 
+    const { view } = req.body;
     const img = req.file.path;
 
     const homeSlider = await HomeSlider.create({
       img,
       isActive: false,
       isDelete: false,
+      view,
     });
     return apiResponse.successResponseWithData(
       res,
@@ -28,6 +30,7 @@ exports.addHomeSlider = async (req, res) => {
 exports.updateHomeSlider = async (req, res) => {
   try {
     const { id } = req.params;
+    const { view } = req.body;
 
     if (!req.file) {
       return apiResponse.ErrorResponse(res, "Image is required");
@@ -40,8 +43,9 @@ exports.updateHomeSlider = async (req, res) => {
       return apiResponse.notFoundResponse(res, "HomeSlider not found");
     }
 
-    carrousal.img = img;
-    await carrousal.save();
+    homeSlider.img = img;
+    homeSlider.view = view;
+    await homeSlider.save();
 
     return apiResponse.successResponseWithData(
       res,
@@ -56,22 +60,20 @@ exports.updateHomeSlider = async (req, res) => {
 
 exports.getHomeSlider = async (req, res) => {
   try {
-    const homeSlider = await HomeSlider.findAll({ where: { isDelete: false } });
+    const homeSliders = await HomeSlider.findAll({ where: { isDelete: false } });
 
     // Base URL for images
     const baseUrl = `${req.protocol}://${req.get("host")}/`;
 
-    const homeSliderWithBaseUrl = homeSlider.map((homeSlider) => {
-      return {
-        ...homeSlider.toJSON(),
-        img: homeSlider.img ? baseUrl + homeSlider.img.replace(/\\/g, "/") : null,
-      };
-    });
+    const homeSlidersWithBaseUrl = homeSliders.map((homeSlider) => ({
+      ...homeSlider.toJSON(),
+      img: homeSlider.img ? baseUrl + homeSlider.img.replace(/\\/g, "/") : null,
+    }));
 
     return apiResponse.successResponseWithData(
       res,
       "HomeSlider retrieved successfully",
-      homeSliderWithBaseUrl
+      homeSlidersWithBaseUrl
     );
   } catch (error) {
     console.error("Get HomeSlider failed", error);
