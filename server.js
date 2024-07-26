@@ -5,13 +5,16 @@ const fs = require("fs");
 const path = require("path");
 const port = process.env.PORT || 8000;
 const cors = require("cors");
+
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow this origin
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'], // Include PATCH method
+  origin: ['http://localhost:3000', 'http://localhost:5173'], // Allow both origins
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'], // Include all necessary methods
 };
+
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use("/uploads", express.static("uploads"));
+
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const headerContactRoutes = require("./routes/headerContactRoutes");
