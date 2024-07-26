@@ -1,5 +1,5 @@
-const BlogDetail = require('../models/BlogDetail');
-const apiResponse = require('../helper/apiResponse');
+const BlogDetail = require("../models/BlogDetail");
+const apiResponse = require("../helper/apiResponse");
 
 exports.addBlogDetail = async (req, res) => {
   try {
@@ -17,12 +17,12 @@ exports.addBlogDetail = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      'Blog details added successfully',
+      "Blog details added successfully",
       blogDetail
     );
   } catch (error) {
-    console.error('Add blog details failed', error);
-    return apiResponse.ErrorResponse(res, 'Add blog details failed');
+    console.error("Add blog details failed", error);
+    return apiResponse.ErrorResponse(res, "Add blog details failed");
   }
 };
 
@@ -34,7 +34,7 @@ exports.updateBlogDetail = async (req, res) => {
 
     const blogDetail = await BlogDetail.findByPk(id);
     if (!blogDetail) {
-      return apiResponse.notFoundResponse(res, 'Blog detail not found');
+      return apiResponse.notFoundResponse(res, "Blog detail not found");
     }
 
     blogDetail.img = img || blogDetail.img;
@@ -45,29 +45,41 @@ exports.updateBlogDetail = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      'Blog details updated successfully',
+      "Blog details updated successfully",
       blogDetail
     );
   } catch (error) {
-    console.error('Update blog details failed', error);
-    return apiResponse.ErrorResponse(res, 'Update blog details failed');
+    console.error("Update blog details failed", error);
+    return apiResponse.ErrorResponse(res, "Update blog details failed");
   }
 };
+
 
 exports.getBlogDetails = async (req, res) => {
   try {
-    const blogDetails = await BlogDetail.findAll({ where: { isDelete: false } });
+    const blogDetails = await BlogDetail.findAll({
+      where: { isDelete: false },
+    });
+
+    // Base URL for images
+    const baseUrl = `${req.protocol}://${req.get("host")}/`; // Adjust according to your setup
+
+    const blogDetailsWithBaseUrl = blogDetails.map((blogDetail) => ({
+      ...blogDetail.toJSON(), // Convert Sequelize instance to plain object
+      img: blogDetail.img ? baseUrl + blogDetail.img.replace(/\\/g, "/") : null,
+    }));
 
     return apiResponse.successResponseWithData(
       res,
-      'Blog details retrieved successfully',
-      blogDetails
+      "Infrastructure retrieved successfully",
+      blogDetailsWithBaseUrl
     );
   } catch (error) {
-    console.error('Get blog details failed', error);
-    return apiResponse.ErrorResponse(res, 'Get blog details failed');
+    console.error("Get blogDetails failed", error);
+    return apiResponse.ErrorResponse(res, "Get blogDetails failed");
   }
 };
+
 
 exports.isActiveStatus = async (req, res) => {
   try {
@@ -75,7 +87,7 @@ exports.isActiveStatus = async (req, res) => {
     const blogDetail = await BlogDetail.findByPk(id);
 
     if (!blogDetail) {
-      return apiResponse.notFoundResponse(res, 'Blog detail not found');
+      return apiResponse.notFoundResponse(res, "Blog detail not found");
     }
 
     blogDetail.isActive = !blogDetail.isActive;
@@ -83,12 +95,15 @@ exports.isActiveStatus = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      'Blog detail active status updated successfully',
+      "Blog detail active status updated successfully",
       blogDetail
     );
   } catch (error) {
-    console.error('Toggle blog detail active status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle blog detail active status failed');
+    console.error("Toggle blog detail active status failed", error);
+    return apiResponse.ErrorResponse(
+      res,
+      "Toggle blog detail active status failed"
+    );
   }
 };
 
@@ -98,7 +113,7 @@ exports.isDeleteStatus = async (req, res) => {
     const blogDetail = await BlogDetail.findByPk(id);
 
     if (!blogDetail) {
-      return apiResponse.notFoundResponse(res, 'Blog detail not found');
+      return apiResponse.notFoundResponse(res, "Blog detail not found");
     }
 
     blogDetail.isDelete = !blogDetail.isDelete;
@@ -106,11 +121,14 @@ exports.isDeleteStatus = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      'Blog detail delete status updated successfully',
+      "Blog detail delete status updated successfully",
       blogDetail
     );
   } catch (error) {
-    console.error('Toggle blog detail delete status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle blog detail delete status failed');
+    console.error("Toggle blog detail delete status failed", error);
+    return apiResponse.ErrorResponse(
+      res,
+      "Toggle blog detail delete status failed"
+    );
   }
 };
