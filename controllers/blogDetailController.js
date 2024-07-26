@@ -71,7 +71,7 @@ exports.getBlogDetails = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      "Infrastructure retrieved successfully",
+      "blogDetails retrieved successfully",
       blogDetailsWithBaseUrl
     );
   } catch (error) {
