@@ -7,7 +7,7 @@ const port = process.env.PORT || 8000;
 const cors = require("cors");
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5173'], // Allow both origins
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'https://positivebackend.sumagodemo.com/'], // Allow both origins
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'], // Include all necessary methods
 };
 
