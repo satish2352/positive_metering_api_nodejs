@@ -40,7 +40,7 @@ const upload = multer({
 
 // Custom middleware to check file size after upload
 const validateImageSize = (req, res, next) => {
-    if (req.file && req.file.size > 300 * 1024) { // 300 KB
+    if (req.file && req.file.size > 800 * 1024) { // 300 KB
       return res.status(400).json({ error: 'Image size must be less than 300 KB' });
     }
     next();
