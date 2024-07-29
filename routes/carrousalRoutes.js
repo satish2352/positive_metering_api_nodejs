@@ -17,7 +17,7 @@ router.post('/create-carrousal', upload.single('img'), validateImageSize, authen
 router.put('/update-carrousal/:id', upload.single('img'), validateImageSize, authenticateToken, validateCarrousalId, updateCarrousal);
 router.get('/get-carrousal', getCarrousals);
 router.get('/find-carrousal', authenticateToken, getCarrousals);
-router.patch('/isactive-carrousal/:id', authenticateToken, validateCarrousalId, toggleCarrousalStatus);
-router.patch('/isdelete-carrousal/:id', authenticateToken, validateCarrousalId, toggleCarrousalDelete);
+router.put('/isactive-carrousal/:id', authenticateToken, validateCarrousalId, toggleCarrousalStatus);
+router.delete('/isdelete-carrousal/:id', authenticateToken, validateCarrousalId, toggleCarrousalDelete);
 
 module.exports = router;

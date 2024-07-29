@@ -16,7 +16,7 @@ router.post('/create-office', upload.single('img'), authenticateToken, validateO
 router.put('/update-office/:id', upload.single('img'), authenticateToken, validateOffice, validateOfficeId, updateOffice);
 router.get('/get-offices', getOffices);
 router.get('/find-offices', authenticateToken, getOffices);
-router.patch('/isactive-office/:id', authenticateToken, validateOfficeId, toggleOfficeStatus);
-router.patch('/isdelete-office/:id', authenticateToken, validateOfficeId, toggleOfficeDelete);
+router.put('/isactive-office/:id', authenticateToken, validateOfficeId, toggleOfficeStatus);
+router.delete('/isdelete-office/:id', authenticateToken, validateOfficeId, toggleOfficeDelete);
 
 module.exports = router;

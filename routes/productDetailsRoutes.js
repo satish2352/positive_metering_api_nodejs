@@ -16,7 +16,7 @@ router.post('/create-productdetails', upload.single('img'), validateImageSize, a
 router.put('/update-productdetails/:id', upload.single('img'), validateImageSize, authenticateToken, validateProductDetails, validateProductDetailsId, updateProductDetails);
 router.get('/get-productdetails', getProductDetails);
 router.get('/find-productdetails', authenticateToken, getProductDetails);
-router.patch('/isactive-productdetails/:id', authenticateToken, validateProductDetailsId, isActiveStatus);
-router.patch('/isdelete-productdetails/:id', authenticateToken, validateProductDetailsId, isDeleteStatus);
+router.put('/isactive-productdetails/:id', authenticateToken, validateProductDetailsId, isActiveStatus);
+router.delete('/isdelete-productdetails/:id', authenticateToken, validateProductDetailsId, isDeleteStatus);
 
 module.exports = router;

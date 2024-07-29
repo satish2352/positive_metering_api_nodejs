@@ -15,7 +15,7 @@ router.post('/create-productname', authenticateToken, validateProductName, addPr
 router.get('/get-productnames', getProductNames);
 router.get('/find-productnames', authenticateToken, getProductNames);
 router.put('/update-productname/:id', authenticateToken, validateProductNameId, validateProductName, updateProductName);
-router.patch('/isactive-productname/:id', authenticateToken, validateProductNameId, isActiveStatus);
-router.patch('/isdelete-productname/:id', authenticateToken, validateProductNameId, isDeleteStatus);
+router.put('/isactive-productname/:id', authenticateToken, validateProductNameId, isActiveStatus);
+router.delete('/isdelete-productname/:id', authenticateToken, validateProductNameId, isDeleteStatus);
 
 module.exports = router;

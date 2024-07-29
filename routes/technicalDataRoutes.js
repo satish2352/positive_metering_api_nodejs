@@ -13,5 +13,5 @@ const router = express.Router();
 router.post('/create-technicaldata', authenticateToken, addTechnicalData);
 router.put('/update-technicaldata/:id', authenticateToken, updateTechnicalData);
 router.get('/get-technicaldata', authenticateToken, getTechnicalData);
-router.patch('/delete-technical/:id',authenticateToken,deleteTechnicalData);
+router.delete('/delete-technical/:id',authenticateToken,deleteTechnicalData);
 module.exports = router;

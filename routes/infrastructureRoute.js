@@ -16,7 +16,7 @@ router.post('/create-infrastructure', upload.single('img'), validateImageSize, a
 router.put('/update-infrastructure/:id', upload.single('img'), validateImageSize, authenticateToken, validateInfrastructure, validateInfrastructureId, updateInfrastructure);
 router.get('/get-infrastructure', getInfrastructure);
 router.get('/find-infrastructure', authenticateToken, getInfrastructure);
-router.patch('/isactive-infrastructure/:id', authenticateToken, validateInfrastructureId, isActiveStatus);
-router.patch('/isdelete-infrastructure/:id', authenticateToken, validateInfrastructureId, isDeleteStatus);
+router.put('/isactive-infrastructure/:id', authenticateToken, validateInfrastructureId, isActiveStatus);
+router.delete('/isdelete-infrastructure/:id', authenticateToken, validateInfrastructureId, isDeleteStatus);
 
 module.exports = router;

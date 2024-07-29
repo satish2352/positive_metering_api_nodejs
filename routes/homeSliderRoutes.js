@@ -17,7 +17,7 @@ router.post('/create-homeslider', upload.single('img'), validateImageSize, image
 router.put('/update-homeslider/:id', upload.single('img'), validateImageSize, imageRequired, authenticateToken, validateHomeSliderId, updateHomeSlider);
 router.get('/get-homeslider', getHomeSlider);
 router.get('/find-homeslider', authenticateToken, getHomeSlider);
-router.patch('/isactive-homeslider/:id', authenticateToken, validateHomeSliderId, isActiveStatus);
-router.patch('/isdelete-homeslider/:id', authenticateToken, validateHomeSliderId, isDeleteStatus);
+router.put('/isactive-homeslider/:id', authenticateToken, validateHomeSliderId, isActiveStatus);
+router.delete('/isdelete-homeslider/:id', authenticateToken, validateHomeSliderId, isDeleteStatus);
 
 module.exports = router;

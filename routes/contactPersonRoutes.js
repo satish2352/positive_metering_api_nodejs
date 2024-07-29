@@ -16,7 +16,7 @@ router.post('/create-contactperson', upload.single('img'), imageRequired, authen
 router.put('/update-contactperson/:id', upload.single('img'), imageRequired, authenticateToken, validateContactPerson, validateContactPersonId, updateContactPerson);
 router.get('/get-contactpersons', getContactPersons);
 router.get('/find-contactpersons', authenticateToken, getContactPersons);
-router.patch('/isactive-contactperson/:id', authenticateToken, validateContactPersonId, toggleContactPersonStatus);
-router.patch('/isdelete-contactperson/:id', authenticateToken, validateContactPersonId, toggleContactPersonDelete);
+router.put('/isactive-contactperson/:id', authenticateToken, validateContactPersonId, toggleContactPersonStatus);
+router.delete('/isdelete-contactperson/:id', authenticateToken, validateContactPersonId, toggleContactPersonDelete);
 
 module.exports = router;

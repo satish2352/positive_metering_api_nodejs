@@ -16,7 +16,7 @@ router.post('/create-testimonials', upload.single('img'), validateImageSize, aut
 router.put('/update-testimonials/:id', upload.single('img'), validateImageSize, authenticateToken, validateTestimonial, validateTestimonialId, updateTestimonial);
 router.get('/get-testimonials', getTestimonials);
 router.get('/find-testimonials', authenticateToken, getTestimonials);
-router.patch('/isactive-testimonial/:id', authenticateToken, validateTestimonialId, isActiveStatus);
-router.patch('/isdelete-testimonial/:id', authenticateToken, validateTestimonialId, isDeleteStatus);
+router.put('/isactive-testimonial/:id', authenticateToken, validateTestimonialId, isActiveStatus);
+router.delete('/isdelete-testimonial/:id', authenticateToken, validateTestimonialId, isDeleteStatus);
 
 module.exports = router;

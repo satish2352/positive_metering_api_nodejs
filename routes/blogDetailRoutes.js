@@ -15,7 +15,7 @@ router.post('/create-blogdetail', upload.single('img'), authenticateToken, addBl
 router.put('/update-blogdetail/:id', upload.single('img'), authenticateToken, updateBlogDetail);
 router.get('/get-blogdetails', getBlogDetails);
 router.get('/find-blogdetails',authenticateToken, getBlogDetails);
-router.patch('/isactive-blogdetail/:id', authenticateToken, isActiveStatus);
-router.patch('/isdelete-blogdetail/:id', authenticateToken, isDeleteStatus);
+router.put('/isactive-blogdetail/:id', authenticateToken, isActiveStatus);
+router.delete ('/isdelete-blogdetail/:id', authenticateToken, isDeleteStatus);
 
 module.exports = router;

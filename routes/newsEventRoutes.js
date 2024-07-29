@@ -18,7 +18,7 @@ const router = express.Router();
 router.post('/create-newevent', upload.single('img'), authenticateToken, validateNewsEvent, addNewsEvent);
 router.put('/update-newevent/:id', upload.single('img'), authenticateToken, validateNewsEvent, validateNewsEventId, updateNewsEvent);
 router.get('/get-newevents', getNewsEvents);
-router.patch('/isactive-newevent/:id', authenticateToken, validateNewsEventId, isActiveStatus);
-router.patch('/isdelete-newevent/:id', authenticateToken, validateNewsEventId, isDeleteStatus);
+router.put('/isactive-newevent/:id', authenticateToken, validateNewsEventId, isActiveStatus);
+router.delete('/isdelete-newevent/:id', authenticateToken, validateNewsEventId, isDeleteStatus);
 
 module.exports = router;
