@@ -14,13 +14,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  res.set({
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "*",
-      "Access-Control-Allow-Headers": "'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'",
-  });
+// app.use((req, res, next) => {
+//   res.set({
+//       "Access-Control-Allow-Origin": "*",
+//       "Access-Control-Allow-Methods": "*",
+//       "Access-Control-Allow-Headers": "'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'",
+//   });
 
+//   next();
+// });
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); // Adjust the origin as needed
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
