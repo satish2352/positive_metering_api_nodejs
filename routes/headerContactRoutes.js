@@ -44,4 +44,4 @@ module.exports = router;
 router.put('/isactive/:id', authenticateToken, validateHeaderContactId, isActiveStatus);
 
 // Toggle header contact delete status
-router.put('/isdelete/:id', authenticateToken, validateHeaderContactId, isDeleteStatus);
+router.delete('/isdelete/:id', authenticateToken, validateHeaderContactId, isDeleteStatus);
