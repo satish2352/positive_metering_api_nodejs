@@ -18,6 +18,7 @@ const router = express.Router();
 router.post('/create-teammember', upload.single('img'), authenticateToken, validateTeamMember, addTeamMember);
 router.put('/update-teammember/:id', upload.single('img'), authenticateToken, validateTeamMember, validateTeamMemberId, updateTeamMember);
 router.get('/get-teammembers', getTeamMembers);
+router.get('/find-teammembers', authenticateToken, getTeamMembers);
 router.put('/isactive-teammember/:id', authenticateToken, validateTeamMemberId, isActiveStatus);
 router.delete('/isdelete-teammember/:id', authenticateToken, validateTeamMemberId, isDeleteStatus);
 

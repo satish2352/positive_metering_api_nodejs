@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Team = sequelize.define('Team', {
@@ -21,7 +21,6 @@ const Team = sequelize.define('Team', {
   position_no: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true, // Ensuring position_no is unique
   },
   isActive: {
     type: DataTypes.BOOLEAN,

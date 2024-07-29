@@ -1,6 +1,7 @@
 const Team = require('../models/Team');
 const apiResponse = require('../helper/apiResponse');
 const { validationResult } = require('express-validator');
+const { sequelize, Sequelize } = require('../config/database');
 
 exports.addTeamMember = async (req, res) => {
   const errors = validationResult(req);
@@ -12,6 +13,13 @@ exports.addTeamMember = async (req, res) => {
     const { name, designation, description, position_no } = req.body;
     const img = req.file ? req.file.path : null;
 
+    // Increment positions of existing members
+    await Team.update(
+      { position_no: Sequelize.literal('position_no + 1') },
+      { where: { position_no: { [Sequelize.Op.gte]: position_no } } }
+    );
+
+    // Create the new team member
     const teamMember = await Team.create({
       img,
       name,
@@ -44,11 +52,30 @@ exports.updateTeamMember = async (req, res) => {
     const { name, designation, description, position_no } = req.body;
     const img = req.file ? req.file.path : null;
 
+    // Find the team member
     const teamMember = await Team.findByPk(id);
     if (!teamMember) {
       return apiResponse.notFoundResponse(res, 'Team member not found');
     }
 
+    // Adjust positions if necessary
+    if (teamMember.position_no !== position_no) {
+      // Increment positions of records shifting down
+      if (position_no < teamMember.position_no) {
+        await Team.update(
+          { position_no: Sequelize.literal('position_no + 1') },
+          { where: { position_no: { [Sequelize.Op.between]: [position_no, teamMember.position_no - 1] } } }
+        );
+      } else {
+        // Decrement positions of records shifting up
+        await Team.update(
+          { position_no: Sequelize.literal('position_no - 1') },
+          { where: { position_no: { [Sequelize.Op.between]: [teamMember.position_no + 1, position_no] } } }
+        );
+      }
+    }
+
+    // Update the team member
     teamMember.img = img || teamMember.img;
     teamMember.name = name;
     teamMember.designation = designation;
