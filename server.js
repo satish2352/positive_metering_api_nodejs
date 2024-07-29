@@ -1,5 +1,5 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const app = express();
 const fs = require("fs");
 const path = require("path");
@@ -11,8 +11,9 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'], // Include all necessary methods
 };
 
-app.use(cors(corsOptions));
-app.use(bodyParser.json());
+// app.use(cors(corsOptions));
+app.use(cors());
+// app.use(bodyParser.json());
 
 
 app.use("/uploads", express.static("uploads"));
