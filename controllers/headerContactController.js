@@ -7,8 +7,8 @@ exports.addHeaderContact = async (req, res) => {
     const headerContact = await HeaderContact.create({
       phone1,
       phone2,
-      isActive: false,
-      isDelete: false,
+      // isActive: false,
+      // isDelete: false,
     });
     return apiResponse.successResponseWithData(
       res,
@@ -70,7 +70,7 @@ exports.isActiveStatus = async (req, res) => {
     }
 
     // Toggle the isActive status
-    headerContact.isActive = !headerContact.isActive;
+    headerContact.isActive = headerContact.isActive == 1 ? "0" : "1";
     await headerContact.save();
 
     return apiResponse.successResponseWithData(
@@ -94,16 +94,23 @@ exports.isDeleteStatus = async (req, res) => {
     const headerContact = await HeaderContact.findByPk(id);
 
     if (!headerContact) {
-      return apiResponse.notFoundResponse(res, 'Header contact not found');
+      return apiResponse.notFoundResponse(res, "Header contact not found");
     }
 
     // Toggle the isDelete status
-    headerContact.isDelete = !headerContact.isDelete;
+    headerContact.isDelete = headerContact.isDelete == 0 ? "1" : "0";
     await headerContact.save();
 
-    return apiResponse.successResponseWithData(res, 'Header contact delete status updated successfully', headerContact);
+    return apiResponse.successResponseWithData(
+      res,
+      "Header contact delete status updated successfully",
+      headerContact
+    );
   } catch (error) {
-    console.log('Toggle header contact delete status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle header contact delete status failed');
+    console.log("Toggle header contact delete status failed", error);
+    return apiResponse.ErrorResponse(
+      res,
+      "Toggle header contact delete status failed"
+    );
   }
 };

@@ -12,7 +12,7 @@ const HeaderContact = sequelize.define("HeaderContact", {
   },
   isActive: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    defaultValue: true,
   },
   isDelete: {
     type: DataTypes.BOOLEAN,
