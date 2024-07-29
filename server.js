@@ -1,5 +1,5 @@
 const express = require("express");
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 const app = express();
 const fs = require("fs");
 const path = require("path");
@@ -13,7 +13,7 @@ const corsOptions = {
 
 // app.use(cors(corsOptions));
 app.use(cors());
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 
 
 app.use("/uploads", express.static("uploads"));
