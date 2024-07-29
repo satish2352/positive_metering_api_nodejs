@@ -70,7 +70,7 @@ exports.isActiveStatus = async (req, res) => {
     }
 
     // Toggle the isActive status
-    headerContact.isActive = headerContact.isActive == 1 ? "0" : "1";
+    headerContact.isActive = !headerContact.isActive;
     await headerContact.save();
 
     return apiResponse.successResponseWithData(
@@ -98,7 +98,7 @@ exports.isDeleteStatus = async (req, res) => {
     }
 
     // Toggle the isDelete status
-    headerContact.isDelete = headerContact.isDelete == 0 ? "1" : "0";
+    headerContact.isDelete = !headerContact.isDelete;
     await headerContact.save();
 
     return apiResponse.successResponseWithData(
