@@ -41,7 +41,7 @@ router.get('/findheadercontacts', authenticateToken, getHeaderContact);
 module.exports = router;
 
 // Toggle header contact status
-router.put('/isactive/:id', authenticateToken, validateHeaderContactId, isActiveStatus);
+router.patch('/isactive/:id', authenticateToken, validateHeaderContactId, isActiveStatus);
 
 // Toggle header contact delete status
-router.delete('/isdelete/:id', authenticateToken, validateHeaderContactId, isDeleteStatus);
+router.patch('/isdelete/:id', authenticateToken, validateHeaderContactId, isDeleteStatus);
