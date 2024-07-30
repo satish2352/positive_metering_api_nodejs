@@ -15,7 +15,7 @@ const NewsEvent = sequelize.define('NewsEvent', {
     allowNull: false,
   },
   longDesc: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   isActive: {
