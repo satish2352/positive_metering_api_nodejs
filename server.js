@@ -6,13 +6,13 @@ const path = require("path");
 const port = process.env.PORT || 8000;
 const cors = require("cors");
 
-const corsOptions = {
-  origin: ['*'],
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
+// const corsOptions = {
+//   origin: ['*'],
+//   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 // app.use((req, res, next) => {
 //   res.setHeader('Access-Control-Allow-Origin', 'https://positivebackend.sumagodemo.com'); // Replace with your frontend URL
 //   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
