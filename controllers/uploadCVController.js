@@ -6,7 +6,7 @@ exports.addUploadCV = async (req, res) => {
     const { name, email, phone, subject, message } = req.body;
     const cv = req.file ? req.file.path : null;
 
-    const uploadCV = await UploadCV.create({ name, email, phone, subject, message, cv, isActive: false, isDelete: false });
+    const uploadCV = await UploadCV.create({ name, email, phone, subject, message, cv, isActive: true, isDelete: false });
     return apiResponse.successResponseWithData(res, 'CV uploaded successfully', uploadCV);
   } catch (error) {
     console.error('Upload CV failed', error);

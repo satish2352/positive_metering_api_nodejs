@@ -7,8 +7,8 @@ exports.addHeaderContact = async (req, res) => {
     const headerContact = await HeaderContact.create({
       phone1,
       phone2,
-      // isActive: false,
-      // isDelete: false,
+      isActive: true,
+      isDelete: false,
     });
     return apiResponse.successResponseWithData(
       res,

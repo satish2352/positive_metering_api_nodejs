@@ -6,7 +6,7 @@ exports.addContactPerson = async (req, res) => {
     const { title, person_name, phone, email } = req.body;
     const img = req.file ? req.file.path : null;
 
-    const contactPerson = await ContactPerson.create({ title, person_name, phone, img, email, isActive: false, isDelete: false });
+    const contactPerson = await ContactPerson.create({ title, person_name, phone, img, email, isActive: true, isDelete: false });
     return apiResponse.successResponseWithData(res, 'Contact person added successfully', contactPerson);
   } catch (error) {
     console.error('Add contact person failed', error);

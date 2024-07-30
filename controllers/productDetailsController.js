@@ -11,7 +11,7 @@ exports.addProductDetails = async (req, res) => {
       img,
       productName,
       application,
-      isActive: false,
+      isActive: true,
       isDelete: false,
     });
 

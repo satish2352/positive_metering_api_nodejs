@@ -12,7 +12,7 @@ exports.addHomeSlider = async (req, res) => {
 
     const homeSlider = await HomeSlider.create({
       img,
-      isActive: false,
+      isActive: true,
       isDelete: false,
       view,
     });

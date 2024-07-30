@@ -6,7 +6,7 @@ exports.addTestimonial = async (req, res) => {
     const { title, review, star } = req.body;
     const img = req.file ? req.file.path : null;
 
-    const testimonial = await Testimonial.create({ img, title, review, star, isActive: false, isDelete: false });
+    const testimonial = await Testimonial.create({ img, title, review, star, isActive: true, isDelete: false });
     return apiResponse.successResponseWithData(res, 'Testimonial added successfully', testimonial);
   } catch (error) {
     console.error('Add testimonial failed', error);

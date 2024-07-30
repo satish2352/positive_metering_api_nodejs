@@ -6,7 +6,7 @@ exports.addOffice = async (req, res) => {
     const { title, address, phone, email } = req.body;
     const img = req.file ? req.file.path : null;
 
-    const office = await Office.create({ img, title, address, phone, email, isActive: false, isDelete: false });
+    const office = await Office.create({ img, title, address, phone, email, isActive: true, isDelete: false });
     return apiResponse.successResponseWithData(res, 'Office added successfully', office);
   } catch (error) {
     console.error('Add office failed', error);

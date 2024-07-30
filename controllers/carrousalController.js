@@ -11,7 +11,7 @@ exports.addCarrousal = async (req, res) => {
 
     const carrousal = await Carrousal.create({
       img,
-      isActive: false,
+      isActive: true,
       isDelete: false,
     });
     return apiResponse.successResponseWithData(
