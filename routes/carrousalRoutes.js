@@ -1,5 +1,5 @@
 const express = require('express');
-const { upload, validateImageSize } = require('../middleware/multer');
+const { upload } = require('../middleware/multer');
 const { validateCarrousalId } = require('../validations/carrousalValidation');
 const {
   addCarrousal,
@@ -13,8 +13,8 @@ const imageRequired = require('../validations/imageValidation');
 
 const router = express.Router();
 
-router.post('/create-carrousal', upload.single('img'), validateImageSize, authenticateToken, addCarrousal);
-router.put('/update-carrousal/:id', upload.single('img'), validateImageSize, authenticateToken, validateCarrousalId, updateCarrousal);
+router.post('/create-carrousal', upload.single('img'), authenticateToken, addCarrousal);
+router.put('/update-carrousal/:id', upload.single('img'), authenticateToken, validateCarrousalId, updateCarrousal);
 router.get('/get-carrousal', getCarrousals);
 router.get('/find-carrousal', authenticateToken, getCarrousals);
 router.put('/isactive-carrousal/:id', authenticateToken, validateCarrousalId, toggleCarrousalStatus);

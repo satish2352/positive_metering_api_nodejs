@@ -1,5 +1,5 @@
 const express = require('express');
-const { upload, validateImageSize } = require('../middleware/multer');
+const { upload } = require('../middleware/multer');
 const { validateHomeSliderId } = require('../validations/homeSliderValidation');
 const {
   addHomeSlider,
@@ -13,8 +13,8 @@ const imageRequired = require('../validations/imageValidation');
 
 const router = express.Router();
 
-router.post('/create-homeslider', upload.single('img'), validateImageSize, imageRequired, authenticateToken, addHomeSlider);
-router.put('/update-homeslider/:id', upload.single('img'), validateImageSize, imageRequired, authenticateToken, validateHomeSliderId, updateHomeSlider);
+router.post('/create-homeslider', upload.single('img'), imageRequired, authenticateToken, addHomeSlider);
+router.put('/update-homeslider/:id', upload.single('img'), imageRequired, authenticateToken, validateHomeSliderId, updateHomeSlider);
 router.get('/get-homeslider', getHomeSlider);
 router.get('/find-homeslider', authenticateToken, getHomeSlider);
 router.put('/isactive-homeslider/:id', authenticateToken, validateHomeSliderId, isActiveStatus);
