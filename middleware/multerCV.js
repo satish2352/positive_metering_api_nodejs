@@ -30,12 +30,12 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 300 * 1024 } // 300 KB limit
+  // limits: { fileSize: 300 * 1024 } // 300 KB limit
 });
 
 // Custom middleware to check file size after upload
 const validateFileSize = (req, res, next) => {
-  if (req.file && req.file.size > 300 * 1024) { // 300 KB
+  if (req.file && req.file.size > 1024 * 1024) { // 300 KB
     return res.status(400).json({ error: 'File size must be less than 300 KB' });
   }
   next();
