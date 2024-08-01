@@ -4,6 +4,7 @@ const OptionsData = require('../models/OptionsData');
 const TechnicalData = require('../models/TechnicalData');
 const MaterialData = require('../models/MaterialData');
 const apiResponse = require('../helper/apiResponse');
+const ApplicationData = require('../models/ApplicationsData');
 
 exports.getAllProductData = async (req, res) => {
   try {
@@ -19,6 +20,7 @@ exports.getAllProductData = async (req, res) => {
     const optionsData = await OptionsData.findAll({ where: { productId } });
     const technicalData = await TechnicalData.findAll({ where: { productId } });
     const materialData = await MaterialData.findAll({ where: { productId } });
+    const applicationData = await ApplicationData.findAll({ where: { productId } });
 
     // Aggregate all data
     const allProductData = {
@@ -26,6 +28,7 @@ exports.getAllProductData = async (req, res) => {
       optionsData,
       technicalData,
       materialData,
+      applicationData
     };
 
     return apiResponse.successResponseWithData(

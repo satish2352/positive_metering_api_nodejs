@@ -6,7 +6,7 @@ const {
   updateProductDetails,
   getProductDetails,
   isActiveStatus,
-  isDeleteStatus
+  isDeleteStatus,getAllProductNames
 } = require('../controllers/productDetailsController');
 const authenticateToken = require('../middleware/auth');
 
@@ -18,5 +18,5 @@ router.get('/get-productdetails', getProductDetails);
 router.get('/find-productdetails', authenticateToken, getProductDetails);
 router.put('/isactive-productdetails/:id', authenticateToken, validateProductDetailsId, isActiveStatus);
 router.delete('/isdelete-productdetails/:id', authenticateToken, validateProductDetailsId, isDeleteStatus);
-
+router.get("/get-productnames",  getAllProductNames);
 module.exports = router;

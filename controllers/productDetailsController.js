@@ -119,3 +119,21 @@ exports.isDeleteStatus = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Toggle product details delete status failed');
   }
 };
+
+exports.getAllProductNames = async (req, res) => {
+  try {
+    const productNames = await ProductDetails.findAll({
+      attributes: ['productName'],
+      where: { isDelete: false }
+    });
+
+    return apiResponse.successResponseWithData(
+      res,
+      'Product names retrieved successfully',
+      productNames
+    );
+  } catch (error) {
+    console.error('Get product names failed', error);
+    return apiResponse.ErrorResponse(res, 'Get product names failed');
+  }
+};

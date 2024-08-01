@@ -54,7 +54,7 @@ const productAggregateRoutes = require('./routes/productAggregateRoutes');
 const blogDetailRoutes = require('./routes/blogDetailRoutes');
 const newsEventRoutes = require('./routes/newsEventRoutes');
 const teamRoutes = require('./routes/teamRoutes');
-
+const ApplicationRoutes = require('./routes/ApplicationDataRoutes');
 app.use('/team', teamRoutes);
 app.use('/newsandevent', newsEventRoutes);
 app.use('/blogdetails', blogDetailRoutes);
@@ -75,6 +75,7 @@ app.use('/homeslider', homeSliderRoutes);
 app.use('/uploadcv', uploadCVRoutes);
 app.use('/technicalData', technicalDataRoutes);
 app.use('/optionsData', optionsDataRoutes);
+app.use('/applicationData',ApplicationRoutes);
 app.use('/materialData', materialDataRoutes);
 app.use('/productAggregate', productAggregateRoutes);
 
