@@ -1,4 +1,4 @@
-const NewsEvent = require('../models/NewsEvent');
+const NewsEvent = require('../models/News');
 const apiResponse = require('../helper/apiResponse');
 const { validationResult } = require('express-validator');
 
