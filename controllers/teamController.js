@@ -47,17 +47,14 @@ exports.updateTeamMember = async (req, res) => {
     return apiResponse.ErrorResponse(res, errors.array().map(err => err.msg).join(', '));
   }
 
-  const transaction = await sequelize.transaction();
-
   try {
     const { id } = req.params;
     const { name, designation, description, position_no } = req.body;
     const img = req.file ? req.file.path : null;
 
     // Find the team member
-    const teamMember = await Team.findByPk(id, { transaction });
+    const teamMember = await Team.findByPk(id);
     if (!teamMember) {
-      await transaction.rollback();
       return apiResponse.notFoundResponse(res, 'Team member not found');
     }
 
@@ -72,8 +69,7 @@ exports.updateTeamMember = async (req, res) => {
               position_no: {
                 [Sequelize.Op.between]: [position_no, teamMember.position_no - 1],
               },
-            },
-            transaction,
+            }
           }
         );
       } else {
@@ -85,8 +81,7 @@ exports.updateTeamMember = async (req, res) => {
               position_no: {
                 [Sequelize.Op.between]: [teamMember.position_no + 1, position_no],
               },
-            },
-            transaction,
+            }
           }
         );
       }
@@ -98,9 +93,7 @@ exports.updateTeamMember = async (req, res) => {
     teamMember.designation = designation;
     teamMember.description = description;
     teamMember.position_no = position_no;
-    await teamMember.save({ transaction });
-
-    await transaction.commit();
+    await teamMember.save();
 
     return apiResponse.successResponseWithData(
       res,
@@ -108,7 +101,6 @@ exports.updateTeamMember = async (req, res) => {
       teamMember
     );
   } catch (error) {
-    await transaction.rollback();
     console.error('Update team member failed', error);
     return apiResponse.ErrorResponse(res, 'Update team member failed');
   }
