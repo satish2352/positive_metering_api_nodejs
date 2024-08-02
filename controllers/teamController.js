@@ -41,11 +41,15 @@ exports.addTeamMember = async (req, res) => {
   }
 };
 
+const { Sequelize, sequelize } = require('../config/database');
+
 exports.updateTeamMember = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return apiResponse.ErrorResponse(res, errors.array().map(err => err.msg).join(', '));
   }
+
+  const transaction = await sequelize.transaction();
 
   try {
     const { id } = req.params;
@@ -53,24 +57,39 @@ exports.updateTeamMember = async (req, res) => {
     const img = req.file ? req.file.path : null;
 
     // Find the team member
-    const teamMember = await Team.findByPk(id);
+    const teamMember = await Team.findByPk(id, { transaction });
     if (!teamMember) {
+      await transaction.rollback();
       return apiResponse.notFoundResponse(res, 'Team member not found');
     }
 
-    // Adjust positions if necessary
+    // Adjust positions only if the position_no has changed
     if (teamMember.position_no !== position_no) {
-      // Increment positions of records shifting down
       if (position_no < teamMember.position_no) {
+        // Increment positions of records shifting down
         await Team.update(
           { position_no: Sequelize.literal('position_no + 1') },
-          { where: { position_no: { [Sequelize.Op.between]: [position_no, teamMember.position_no - 1] } } }
+          {
+            where: {
+              position_no: {
+                [Sequelize.Op.between]: [position_no, teamMember.position_no - 1],
+              },
+            },
+            transaction,
+          }
         );
       } else {
         // Decrement positions of records shifting up
         await Team.update(
           { position_no: Sequelize.literal('position_no - 1') },
-          { where: { position_no: { [Sequelize.Op.between]: [teamMember.position_no + 1, position_no] } } }
+          {
+            where: {
+              position_no: {
+                [Sequelize.Op.between]: [teamMember.position_no + 1, position_no],
+              },
+            },
+            transaction,
+          }
         );
       }
     }
@@ -81,7 +100,9 @@ exports.updateTeamMember = async (req, res) => {
     teamMember.designation = designation;
     teamMember.description = description;
     teamMember.position_no = position_no;
-    await teamMember.save();
+    await teamMember.save({ transaction });
+
+    await transaction.commit();
 
     return apiResponse.successResponseWithData(
       res,
@@ -89,10 +110,12 @@ exports.updateTeamMember = async (req, res) => {
       teamMember
     );
   } catch (error) {
+    await transaction.rollback();
     console.error('Update team member failed', error);
     return apiResponse.ErrorResponse(res, 'Update team member failed');
   }
 };
+
 
 exports.getTeamMembers = async (req, res) => {
   try {
