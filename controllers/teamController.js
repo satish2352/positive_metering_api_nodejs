@@ -41,8 +41,6 @@ exports.addTeamMember = async (req, res) => {
   }
 };
 
-const { Sequelize, sequelize } = require('../config/database');
-
 exports.updateTeamMember = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -115,7 +113,6 @@ exports.updateTeamMember = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Update team member failed');
   }
 };
-
 
 exports.getTeamMembers = async (req, res) => {
   try {
