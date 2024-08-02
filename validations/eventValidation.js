@@ -2,7 +2,7 @@
 const { body, param } = require('express-validator');
 
 exports.validateEvent = [
-  body('name').notEmpty().withMessage('Event name is required'),
+  // body('name').notEmpty().withMessage('Event name is required'),
   // Add any other validations you need here
 ];
 
