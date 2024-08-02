@@ -8,10 +8,15 @@ exports.addSubscribe = async (req, res) => {
     const subscribe = await Subscribe.create({ email });
     return apiResponse.successResponseWithData(res, 'Subscription added successfully', subscribe);
   } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      console.error('Add subscription failed: Email already exists');
+      return apiResponse.conflictResponse(res, 'Email already subscribed');
+    }
     console.error('Add subscription failed', error);
     return apiResponse.ErrorResponse(res, 'Add subscription failed');
   }
 };
+
 
 exports.getSubscribes = async (req, res) => {
   try {

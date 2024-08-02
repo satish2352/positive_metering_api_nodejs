@@ -5,6 +5,7 @@ const Subscribe = sequelize.define('Subscribe', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true, // Add unique constraint
     validate: {
       isEmail: true,
     },
