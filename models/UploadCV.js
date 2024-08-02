@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const UploadCV = sequelize.define('UploadCV', {
+const UploadCV = sequelize.define('cvlist', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -9,10 +9,12 @@ const UploadCV = sequelize.define('UploadCV', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true, // Unique constraint
   },
   phone: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true, // Unique constraint
   },
   subject: {
     type: DataTypes.STRING,
