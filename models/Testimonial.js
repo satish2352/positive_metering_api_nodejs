@@ -8,7 +8,7 @@ const Testimonial = sequelize.define('Testimonial', {
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   review: {
     type: DataTypes.TEXT,

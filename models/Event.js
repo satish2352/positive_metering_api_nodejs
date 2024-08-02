@@ -5,7 +5,7 @@ const sequelize = require('../config/database');
 const Event = sequelize.define('Event', {
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   img: {
     type: DataTypes.STRING,
