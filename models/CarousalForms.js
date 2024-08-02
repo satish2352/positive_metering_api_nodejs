@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Contact = sequelize.define('CarousalForm', {
+const Contact = sequelize.define('userForm', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
