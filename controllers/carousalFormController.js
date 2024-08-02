@@ -8,6 +8,21 @@ exports.addContact = async (req, res) => {
     const contact = await Contact.create({ name, email, mobile, message });
     return apiResponse.successResponseWithData(res, 'Contact added successfully', contact);
   } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      // Extract the field that caused the unique constraint error
+      const fields = error.errors.map((err) => err.path);
+      let message = 'Validation error: ';
+      
+      if (fields.includes('email')) {
+        message += 'Email already exists. ';
+      }
+      if (fields.includes('mobile')) {
+        message += 'Mobile number already exists.';
+      }
+
+      return apiResponse.validationErrorWithData(res, message.trim());
+    }
+
     console.error('Add contact failed', error);
     return apiResponse.ErrorResponse(res, 'Add contact failed');
   }
@@ -37,10 +52,24 @@ exports.updateContact = async (req, res) => {
     contact.email = email;
     contact.mobile = mobile;
     contact.message = message;
-    await contact.save();
 
+    await contact.save();
     return apiResponse.successResponseWithData(res, 'Contact updated successfully', contact);
   } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      const fields = error.errors.map((err) => err.path);
+      let message = 'Validation error: ';
+      
+      if (fields.includes('email')) {
+        message += 'Email already exists. ';
+      }
+      if (fields.includes('mobile')) {
+        message += 'Mobile number already exists.';
+      }
+
+      return apiResponse.validationErrorWithData(res, message.trim());
+    }
+
     console.error('Update contact failed', error);
     return apiResponse.ErrorResponse(res, 'Update contact failed');
   }

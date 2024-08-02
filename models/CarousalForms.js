@@ -9,6 +9,7 @@ const Contact = sequelize.define('CarousalForm', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true, // Make email field unique
     validate: {
       isEmail: true,
     },
@@ -16,6 +17,7 @@ const Contact = sequelize.define('CarousalForm', {
   mobile: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true, // Make mobile field unique
   },
   message: {
     type: DataTypes.TEXT,
