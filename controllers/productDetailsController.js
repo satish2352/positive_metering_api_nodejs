@@ -1,3 +1,4 @@
+const { UniqueConstraintError } = require('sequelize');
 const ProductDetails = require('../models/ProductDetails');
 const apiResponse = require('../helper/apiResponse');
 
@@ -21,10 +22,14 @@ exports.addProductDetails = async (req, res) => {
       productDetails
     );
   } catch (error) {
+    if (error instanceof UniqueConstraintError) {
+      return apiResponse.ErrorResponse(res, 'Product name already exists');
+    }
     console.error('Add product details failed', error);
     return apiResponse.ErrorResponse(res, 'Add product details failed');
   }
 };
+
 
 exports.updateProductDetails = async (req, res) => {
   try {
@@ -40,7 +45,15 @@ exports.updateProductDetails = async (req, res) => {
     productDetails.img = img || productDetails.img;
     productDetails.productName = productName;
     productDetails.application = application;
-    await productDetails.save();
+
+    try {
+      await productDetails.save();
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        return apiResponse.ErrorResponse(res, 'Product name already exists');
+      }
+      throw error;
+    }
 
     return apiResponse.successResponseWithData(
       res,
