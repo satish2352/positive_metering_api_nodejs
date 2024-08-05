@@ -1,14 +1,18 @@
+const { DataTypes, Sequelize } = require('sequelize');
+const sequelize = require('../config/database');
 const Team = require('../models/Team');
 const apiResponse = require('../helper/apiResponse');
 const { validationResult } = require('express-validator');
-const { sequelize, Sequelize } = require('../config/database');
 
+// Add a new team member
 exports.addTeamMember = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return apiResponse.ErrorResponse(res, errors.array().map(err => err.msg).join(', '));
   }
 
+  const transaction = await sequelize.transaction();
+  
   try {
     const { name, designation, description, position_no } = req.body;
     const img = req.file ? req.file.path : null;
@@ -16,7 +20,10 @@ exports.addTeamMember = async (req, res) => {
     // Increment positions of existing members
     await Team.update(
       { position_no: Sequelize.literal('position_no + 1') },
-      { where: { position_no: { [Sequelize.Op.gte]: position_no } } }
+      { 
+        where: { position_no: { [Sequelize.Op.gte]: position_no }, isDelete: false },
+        transaction
+      }
     );
 
     // Create the new team member
@@ -28,7 +35,9 @@ exports.addTeamMember = async (req, res) => {
       position_no,
       isActive: true,
       isDelete: false,
-    });
+    }, { transaction });
+
+    await transaction.commit();
 
     return apiResponse.successResponseWithData(
       res,
@@ -36,16 +45,20 @@ exports.addTeamMember = async (req, res) => {
       teamMember
     );
   } catch (error) {
+    await transaction.rollback();
     console.error('Add team member failed', error);
     return apiResponse.ErrorResponse(res, 'Add team member failed');
   }
 };
 
+// Update an existing team member
 exports.updateTeamMember = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return apiResponse.ErrorResponse(res, errors.array().map(err => err.msg).join(', '));
   }
+
+  const transaction = await sequelize.transaction();
 
   try {
     const { id } = req.params;
@@ -55,6 +68,7 @@ exports.updateTeamMember = async (req, res) => {
     // Find the team member
     const teamMember = await Team.findByPk(id);
     if (!teamMember) {
+      await transaction.rollback();
       return apiResponse.notFoundResponse(res, 'Team member not found');
     }
 
@@ -69,7 +83,9 @@ exports.updateTeamMember = async (req, res) => {
               position_no: {
                 [Sequelize.Op.between]: [position_no, teamMember.position_no - 1],
               },
-            }
+              isDelete: false,
+            },
+            transaction
           }
         );
       } else {
@@ -81,7 +97,9 @@ exports.updateTeamMember = async (req, res) => {
               position_no: {
                 [Sequelize.Op.between]: [teamMember.position_no + 1, position_no],
               },
-            }
+              isDelete: false,
+            },
+            transaction
           }
         );
       }
@@ -93,7 +111,9 @@ exports.updateTeamMember = async (req, res) => {
     teamMember.designation = designation;
     teamMember.description = description;
     teamMember.position_no = position_no;
-    await teamMember.save();
+    await teamMember.save({ transaction });
+
+    await transaction.commit();
 
     return apiResponse.successResponseWithData(
       res,
@@ -101,11 +121,13 @@ exports.updateTeamMember = async (req, res) => {
       teamMember
     );
   } catch (error) {
+    await transaction.rollback();
     console.error('Update team member failed', error);
     return apiResponse.ErrorResponse(res, 'Update team member failed');
   }
 };
 
+// Get all team members
 exports.getTeamMembers = async (req, res) => {
   try {
     const teamMembers = await Team.findAll({ 
@@ -130,6 +152,7 @@ exports.getTeamMembers = async (req, res) => {
   }
 };
 
+// Toggle the active status of a team member
 exports.isActiveStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -153,6 +176,7 @@ exports.isActiveStatus = async (req, res) => {
   }
 };
 
+// Toggle the delete status of a team member
 exports.isDeleteStatus = async (req, res) => {
   try {
     const { id } = req.params;
