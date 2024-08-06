@@ -1,20 +1,28 @@
-const { UniqueConstraintError } = require('sequelize');
+// controllers/productDetailsController.js
+
 const ProductDetails = require('../models/ProductDetails');
+const ProductImages = require('../models/ProductImage');
 const apiResponse = require('../helper/apiResponse');
 
 exports.addProductDetails = async (req, res) => {
   try {
     console.log(req.body); // Log the body to check the incoming data
     const { productName, application } = req.body;
-    const img = req.file ? req.file.path : null;
+    const images = req.files ? req.files.map(file => file.path) : [];
 
     const productDetails = await ProductDetails.create({
-      img,
       productName,
       application,
       isActive: true,
       isDelete: false,
     });
+
+    // Create ProductImages entries for each image
+    const createdImages = await Promise.all(images.map(img => {
+      return ProductImages.create({ img, ProductDetailsId: productDetails.id });
+    }));
+
+    productDetails.setDataValue('images', createdImages); // Attach images to productDetails
 
     return apiResponse.successResponseWithData(
       res,
@@ -22,9 +30,6 @@ exports.addProductDetails = async (req, res) => {
       productDetails
     );
   } catch (error) {
-    if (error instanceof UniqueConstraintError) {
-      return apiResponse.ErrorResponse(res, 'Product name already exists');
-    }
     console.error('Add product details failed', error);
     return apiResponse.ErrorResponse(res, 'Add product details failed');
   }

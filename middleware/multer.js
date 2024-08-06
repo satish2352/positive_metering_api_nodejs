@@ -37,7 +37,11 @@ const upload = multer({
   fileFilter,
   // limits: { fileSize: 1024 * 1024 } // 1MB limit
 });
-
+const upload2 = multer({
+  storage,
+  fileFilter,
+  // limits: { fileSize: 1024 * 1024 } // 1MB limit
+}).array('img', 5); 
 // Custom middleware to check file size after upload
 const validateImageSize = (req, res, next) => {
     if (req.file && req.file.size > 1024 * 1024) { // 300 KB
@@ -46,4 +50,4 @@ const validateImageSize = (req, res, next) => {
     next();
   };
 
-  module.exports = { upload, validateImageSize };
+  module.exports = { upload,upload2, validateImageSize };

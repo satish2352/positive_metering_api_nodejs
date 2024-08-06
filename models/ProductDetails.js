@@ -1,11 +1,10 @@
+// models/ProductDetails.js
+
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const ProductImages = require('./ProductImage'); // Import the ProductImages model
 
 const ProductDetails = sequelize.define('ProductDetails', {
-  img: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
   productName: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -26,5 +25,9 @@ const ProductDetails = sequelize.define('ProductDetails', {
 }, {
   timestamps: true,
 });
+
+// Define the association
+ProductDetails.hasMany(ProductImages, { as: 'images' });
+ProductImages.belongsTo(ProductDetails);
 
 module.exports = ProductDetails;
