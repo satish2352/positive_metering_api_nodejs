@@ -29,9 +29,9 @@ exports.updateCarrousal = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!req.file) {
-      return apiResponse.ErrorResponse(res, "Image is required");
-    }
+    // if (!req.file) {
+    //   return apiResponse.ErrorResponse(res, "Image is required");
+    // }
 
     const img = req.file.path;
 
