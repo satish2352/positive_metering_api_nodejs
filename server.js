@@ -56,6 +56,7 @@ const newsRoutes = require('./routes/newsRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const ApplicationRoutes = require('./routes/ApplicationDataRoutes');
+const productImagesRouter = require('./routes/productImagesRoutes')
 app.use('/team', teamRoutes);
 app.use('/news', newsRoutes);
 app.use('/events', eventRoutes);
@@ -80,7 +81,7 @@ app.use('/optionsData', optionsDataRoutes);
 app.use('/applicationData',ApplicationRoutes);
 app.use('/materialData', materialDataRoutes);
 app.use('/productAggregate', productAggregateRoutes);
-
+app.use('/productImages', productImagesRouter);
 // Global Error Handling Middleware
 // app.use((err, req, res, next) => {
 //   if (err instanceof multer.MulterError) {

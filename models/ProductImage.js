@@ -11,7 +11,15 @@ const ProductImages = sequelize.define('ProductImages', {
   ProductDetailId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: 'ProductDetails',
+      key: 'id'
+    }
   },
+  productName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }
 }, {
   timestamps: true,
 });

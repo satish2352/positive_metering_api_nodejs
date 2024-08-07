@@ -21,7 +21,8 @@ exports.addProductDetails = async (req, res) => {
     const createdImages = await Promise.all(images.map(img => {
       return ProductImages.create({ 
         img, 
-        ProductDetailId: productDetails.id // Set the foreign key
+        ProductDetailId: productDetails.id,
+        productName // Set the foreign key
       });
     }));
 
@@ -144,8 +145,7 @@ exports.isActiveStatus = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Toggle product details active status failed');
   }
 };
-
-exports.isDeleteStatus = async (req, res) => {
+exports.deleteProductDetails = async (req, res) => {
   try {
     const { id } = req.params;
     const productDetails = await ProductDetails.findByPk(id);
@@ -154,19 +154,15 @@ exports.isDeleteStatus = async (req, res) => {
       return apiResponse.notFoundResponse(res, 'Product details not found');
     }
 
-    productDetails.isDelete = !productDetails.isDelete;
-    await productDetails.save();
+    await productDetails.destroy();
 
-    return apiResponse.successResponseWithData(
-      res,
-      'Product details delete status updated successfully',
-      productDetails
-    );
+    return apiResponse.successResponse(res, 'Product details deleted successfully');
   } catch (error) {
-    console.error('Toggle product details delete status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle product details delete status failed');
+    console.error('Delete product details failed', error);
+    return apiResponse.ErrorResponse(res, 'Delete product details failed');
   }
 };
+
 
 exports.getAllProductNames = async (req, res) => {
   try {

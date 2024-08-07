@@ -67,6 +67,7 @@ exports.deleteProductAndData = async (req, res) => {
     await TechnicalData.destroy({ where: { productId }, transaction });
     await MaterialData.destroy({ where: { productId }, transaction });
     await ApplicationData.destroy({ where: { productId }, transaction });
+    await ProductImages.destroy({ where: {ProductDetailId: productId }, transaction });
 
     // Delete the product
     await ProductDetails.destroy({ where: { id: productId }, transaction });
