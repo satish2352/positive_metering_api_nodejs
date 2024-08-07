@@ -26,30 +26,32 @@ exports.addCarrousal = async (req, res) => {
 };
 
 exports.updateCarrousal = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return apiResponse.ErrorResponse(res, errors.array().map(err => err.msg).join(', '));
+  }
+
   try {
     const { id } = req.params;
-    const img = req.file ? req.file.path : null; // Use null to indicate no new image
+    const img = req.file ? req.file.path : null; // Use null if no new image is uploaded
 
     const carrousal = await Carrousal.findByPk(id);
     if (!carrousal) {
-      return apiResponse.notFoundResponse(res, "Carrousal not found");
+      return apiResponse.notFoundResponse(res, 'Carrousal not found');
     }
 
-    // Only update the image if a new one is uploaded
-    if (img) {
-      carrousal.img = img;
-    }
-
+    // Update the image only if a new one is uploaded
+    carrousal.img = img || carrousal.img;
     await carrousal.save();
 
     return apiResponse.successResponseWithData(
       res,
-      "Carrousal updated successfully",
+      'Carrousal updated successfully',
       carrousal
     );
   } catch (error) {
-    console.error("Update carrousal failed", error);
-    return apiResponse.ErrorResponse(res, "Update carrousal failed");
+    console.error('Update carrousal failed', error);
+    return apiResponse.ErrorResponse(res, 'Update carrousal failed');
   }
 };
 
