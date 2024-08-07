@@ -14,7 +14,7 @@ const imageRequired = require('../validations/imageValidation');
 const router = express.Router();
 
 router.post('/create-homeslider', upload.single('img'), imageRequired, authenticateToken, addHomeSlider);
-router.put('/update-homeslider/:id', upload.single('img'), imageRequired, authenticateToken, validateHomeSliderId, updateHomeSlider);
+router.put('/update-homeslider/:id', upload.single('img'), authenticateToken, validateHomeSliderId, updateHomeSlider);
 router.get('/get-homeslider', getHomeSlider);
 router.get('/find-homeslider', authenticateToken, getHomeSlider);
 router.put('/isactive-homeslider/:id', authenticateToken, validateHomeSliderId, isActiveStatus);
