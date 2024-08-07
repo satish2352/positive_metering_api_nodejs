@@ -29,18 +29,19 @@ exports.updateCarrousal = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // if (!req.file) {
-    //   return apiResponse.ErrorResponse(res, "Image is required");
-    // }
-
-    const img = req.file.path;
+    // Check if a new image file is uploaded
+    const img = req.file ? req.file.path : undefined;
 
     const carrousal = await Carrousal.findByPk(id);
     if (!carrousal) {
       return apiResponse.notFoundResponse(res, "Carrousal not found");
     }
 
-    carrousal.img = img;
+    // Update the image only if a new image is uploaded
+    if (img) {
+      carrousal.img = img;
+    }
+
     await carrousal.save();
 
     return apiResponse.successResponseWithData(
