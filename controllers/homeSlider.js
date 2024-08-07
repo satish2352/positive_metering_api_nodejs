@@ -32,18 +32,17 @@ exports.updateHomeSlider = async (req, res) => {
     const { id } = req.params;
     const { view } = req.body;
 
-    if (!req.file) {
-      return apiResponse.ErrorResponse(res, "Image is required");
-    }
-
-    const img = req.file.path;
-
+    // Find the existing HomeSlider entry
     const homeSlider = await HomeSlider.findByPk(id);
     if (!homeSlider) {
       return apiResponse.notFoundResponse(res, "HomeSlider not found");
     }
 
-    homeSlider.img = img;
+    // Check if a new file is uploaded
+    if (req.file) {
+      homeSlider.img = req.file.path;
+    }
+
     homeSlider.view = view;
     await homeSlider.save();
 
