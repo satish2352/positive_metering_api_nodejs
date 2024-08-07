@@ -1,6 +1,6 @@
 const Carrousal = require("../models/Carrousal");
 const apiResponse = require("../helper/apiResponse");
-
+const { validationResult } = require('express-validator');
 exports.addCarrousal = async (req, res) => {
   try {
     if (!req.file) {
