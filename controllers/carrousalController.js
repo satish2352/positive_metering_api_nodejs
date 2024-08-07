@@ -33,7 +33,7 @@ exports.updateCarrousal = async (req, res) => {
 
   try {
     const { id } = req.params;
-    const img = req.file ? req.file.path : null; // Use null if no new image is uploaded
+    const img = req.file ? req.file.path : null; // Handle file upload
 
     const carrousal = await Carrousal.findByPk(id);
     if (!carrousal) {
@@ -51,9 +51,10 @@ exports.updateCarrousal = async (req, res) => {
     );
   } catch (error) {
     console.error('Update carrousal failed', error);
-    return apiResponse.ErrorResponse(res, 'Update carrousal failed');
+    return apiResponse.ErrorResponse(res, `Update carrousal failed: ${error.message}`);
   }
 };
+
 
 
 exports.getCarrousals = async (req, res) => {
