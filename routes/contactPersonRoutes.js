@@ -13,7 +13,7 @@ const imageRequired = require('../validations/imageValidation');
 const router = express.Router();
 
 router.post('/create-contactperson', upload.single('img'), imageRequired, authenticateToken, validateContactPerson, addContactPerson);
-router.put('/update-contactperson/:id', upload.single('img'), imageRequired, authenticateToken, validateContactPerson, validateContactPersonId, updateContactPerson);
+router.put('/update-contactperson/:id', upload.single('img'), authenticateToken, validateContactPerson, validateContactPersonId, updateContactPerson);
 router.get('/get-contactpersons', getContactPersons);
 router.get('/find-contactpersons', authenticateToken, getContactPersons);
 router.put('/isactive-contactperson/:id', authenticateToken, validateContactPersonId, toggleContactPersonStatus);
