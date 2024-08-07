@@ -3,15 +3,23 @@ const ProductDetails = require('../models/ProductDetails');
 const OptionsData = require('../models/OptionsData');
 const TechnicalData = require('../models/TechnicalData');
 const MaterialData = require('../models/MaterialData');
-const apiResponse = require('../helper/apiResponse');
 const ApplicationData = require('../models/ApplicationsData');
+const ProductImages = require('../models/ProductImage');
+const apiResponse = require('../helper/apiResponse');
 const sequelize = require('../config/database');
+
 exports.getAllProductData = async (req, res) => {
   try {
     const { productId } = req.params;
 
-    // Fetch product details
-    const productDetails = await ProductDetails.findByPk(productId);
+    // Fetch product details with images
+    const productDetails = await ProductDetails.findByPk(productId, {
+      include: [{
+        model: ProductImages,
+        as: 'images'
+      }]
+    });
+
     if (!productDetails) {
       return apiResponse.notFoundResponse(res, 'Product not found');
     }
@@ -41,6 +49,7 @@ exports.getAllProductData = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Get all product data failed');
   }
 };
+
 exports.deleteProductAndData = async (req, res) => {
   const transaction = await sequelize.transaction(); // Using a transaction to ensure atomicity
 

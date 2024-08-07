@@ -8,6 +8,10 @@ const ProductImages = sequelize.define('ProductImages', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  ProductDetailId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 }, {
   timestamps: true,
 });

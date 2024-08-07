@@ -1,9 +1,9 @@
 // controllers/productDetailsController.js
+const { Op } = require('sequelize'); // Import Op from Sequelize
 
 const ProductDetails = require('../models/ProductDetails');
 const ProductImages = require('../models/ProductImage');
 const apiResponse = require('../helper/apiResponse');
-
 exports.addProductDetails = async (req, res) => {
   try {
     console.log(req.body); // Log the body to check the incoming data
@@ -17,9 +17,12 @@ exports.addProductDetails = async (req, res) => {
       isDelete: false,
     });
 
-    // Create ProductImages entries for each image
+    // Create ProductImages entries for each image with the correct foreign key
     const createdImages = await Promise.all(images.map(img => {
-      return ProductImages.create({ img, ProductDetailsId: productDetails.id });
+      return ProductImages.create({ 
+        img, 
+        ProductDetailId: productDetails.id // Set the foreign key
+      });
     }));
 
     productDetails.setDataValue('images', createdImages); // Attach images to productDetails
@@ -34,36 +37,82 @@ exports.addProductDetails = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Add product details failed');
   }
 };
+exports.getAllProductDetails = async (req, res) => {
+  try {
+    const productDetails = await ProductDetails.findAll({
+      include: [{
+        model: ProductImages,
+        as: 'images'
+      }]
+    });
 
-
+    return apiResponse.successResponseWithData(
+      res,
+      'Product details retrieved successfully',
+      productDetails
+    );
+  } catch (error) {
+    console.error('Get all product details failed', error);
+    return apiResponse.ErrorResponse(res, 'Get all product details failed');
+  }
+};
 exports.updateProductDetails = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { productId } = req.params;
     const { productName, application } = req.body;
-    const img = req.file ? req.file.path : null;
+    const images = req.files ? req.files.map(file => file.path) : [];
 
-    const productDetails = await ProductDetails.findByPk(id);
+    // Find the product by primary key
+    const productDetails = await ProductDetails.findByPk(productId);
     if (!productDetails) {
-      return apiResponse.notFoundResponse(res, 'Product details not found');
+      return apiResponse.notFoundResponse(res, 'Product not found');
     }
 
-    productDetails.img = img || productDetails.img;
-    productDetails.productName = productName;
-    productDetails.application = application;
+    // Update product details
+    productDetails.productName = productName || productDetails.productName;
+    productDetails.application = application || productDetails.application;
+    productDetails.isActive = req.body.isActive !== undefined ? req.body.isActive : productDetails.isActive;
+    productDetails.isDelete = req.body.isDelete !== undefined ? req.body.isDelete : productDetails.isDelete;
+    await productDetails.save();
 
-    try {
-      await productDetails.save();
-    } catch (error) {
-      if (error instanceof UniqueConstraintError) {
-        return apiResponse.ErrorResponse(res, 'Product name already exists');
-      }
-      throw error;
+    // Handle images
+    // Remove existing images if not provided in the new request
+    if (images.length > 0) {
+      // Find existing images
+      const existingImages = await ProductImages.findAll({ where: { ProductDetailId: productId } });
+      
+      // Delete images that are not in the new list
+      const imagePaths = images.map(img => img.split('/').pop());
+      await ProductImages.destroy({
+        where: {
+          ProductDetailId: productId,
+          img: {
+            [Op.notIn]: imagePaths
+          }
+        }
+      });
+
+      // Add or update images
+      await Promise.all(images.map(img => {
+        return ProductImages.upsert({
+          img,
+          ProductDetailId: productId // Set the foreign key
+        });
+      }));
     }
+
+    // Fetch updated product details with images
+    const updatedProductDetails = await ProductDetails.findByPk(productId, {
+      include: [{
+        model: ProductImages,
+        as: 'images'
+      }]
+    });
 
     return apiResponse.successResponseWithData(
       res,
       'Product details updated successfully',
-      productDetails
+      updatedProductDetails
     );
   } catch (error) {
     console.error('Update product details failed', error);
@@ -71,26 +120,7 @@ exports.updateProductDetails = async (req, res) => {
   }
 };
 
-exports.getProductDetails = async (req, res) => {
-  try {
-    const productDetails = await ProductDetails.findAll({ where: { isDelete: false } });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const productDetailsWithBaseUrl = productDetails.map(details => ({
-      ...details.toJSON(),
-      img: details.img ? baseUrl + details.img.replace(/\\/g, '/') : null,
-    }));
-
-    return apiResponse.successResponseWithData(
-      res,
-      'Product details retrieved successfully',
-      productDetailsWithBaseUrl
-    );
-  } catch (error) {
-    console.error('Get product details failed', error);
-    return apiResponse.ErrorResponse(res, 'Get product details failed');
-  }
-};
 
 exports.isActiveStatus = async (req, res) => {
   try {

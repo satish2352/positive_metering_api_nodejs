@@ -27,7 +27,7 @@ const ProductDetails = sequelize.define('ProductDetails', {
 });
 
 // Define the association
-ProductDetails.hasMany(ProductImages, { as: 'images' });
-ProductImages.belongsTo(ProductDetails);
+ProductDetails.hasMany(ProductImages, { as: 'images', foreignKey: 'ProductDetailId' });
+ProductImages.belongsTo(ProductDetails, { foreignKey: 'ProductDetailId' });
 
 module.exports = ProductDetails;

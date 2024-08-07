@@ -4,7 +4,7 @@ const { validateProductDetails, validateProductDetailsId } = require('../validat
 const {
   addProductDetails,
   updateProductDetails,
-  getProductDetails,
+  getAllProductDetails,
   isActiveStatus,
   isDeleteStatus,getAllProductNames
 } = require('../controllers/productDetailsController');
@@ -13,9 +13,9 @@ const authenticateToken = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/create-productdetails', upload2, authenticateToken, validateProductDetails, addProductDetails);
-router.put('/update-productdetails/:id', upload2, authenticateToken, validateProductDetails, validateProductDetailsId, updateProductDetails);
-router.get('/get-productdetails', getProductDetails);
-router.get('/find-productdetails', authenticateToken, getProductDetails);
+router.put('/update-productdetails/:productId', upload2, authenticateToken, validateProductDetails, validateProductDetailsId, updateProductDetails);
+router.get('/get-productdetails', getAllProductDetails);
+router.get('/find-productdetails', authenticateToken, getAllProductDetails);
 router.put('/isactive-productdetails/:id', authenticateToken, validateProductDetailsId, isActiveStatus);
 router.delete('/isdelete-productdetails/:id', authenticateToken, validateProductDetailsId, isDeleteStatus);
 router.get("/get-productnames",  getAllProductNames);
