@@ -4,6 +4,41 @@ const { Op } = require('sequelize'); // Import Op from Sequelize
 const ProductDetails = require('../models/ProductDetails');
 const ProductImages = require('../models/ProductImage');
 const apiResponse = require('../helper/apiResponse');
+// exports.addProductDetails = async (req, res) => {
+//   try {
+//     console.log(req.body); // Log the body to check the incoming data
+//     const { productName, application } = req.body;
+//     const images = req.files ? req.files.map(file => file.path) : [];
+
+//     const productDetails = await ProductDetails.create({
+//       productName,
+//       application,
+//       isActive: true,
+//       isDelete: false,
+//     });
+
+//     // Create ProductImages entries for each image with the correct foreign key
+//     const createdImages = await Promise.all(images.map(img => {
+//       return ProductImages.create({ 
+//         img, 
+//         ProductDetailId: productDetails.id,
+//         productName // Set the foreign key
+//       });
+//     }));
+
+//     productDetails.setDataValue('images', createdImages); // Attach images to productDetails
+
+//     return apiResponse.successResponseWithData(
+//       res,
+//       'Product details added successfully',
+//       productDetails
+//     );
+//   } catch (error) {
+//     console.error('Add product details failed', error);
+//     return apiResponse.ErrorResponse(res, 'Add product details failed');
+//   }
+// };
+
 exports.addProductDetails = async (req, res) => {
   try {
     console.log(req.body); // Log the body to check the incoming data
@@ -35,16 +70,29 @@ exports.addProductDetails = async (req, res) => {
     );
   } catch (error) {
     console.error('Add product details failed', error);
+
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return apiResponse.ErrorResponse(res, 'Duplicate entry: Product details already exist');
+    }
+
     return apiResponse.ErrorResponse(res, 'Add product details failed');
   }
 };
+
 exports.getAllProductDetails = async (req, res) => {
   try {
+    const baseURL = `${req.protocol}://${req.get("host")}/`;
     const productDetails = await ProductDetails.findAll({
       include: [{
         model: ProductImages,
         as: 'images'
       }]
+    });
+
+    productDetails.forEach(product => {
+      product.images.forEach(image => {
+        image.img = baseURL + image.img;
+      });
     });
 
     return apiResponse.successResponseWithData(
@@ -57,6 +105,71 @@ exports.getAllProductDetails = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Get all product details failed');
   }
 };
+// exports.updateProductDetails = async (req, res) => {
+//   try {
+//     const { productId } = req.params;
+//     const { productName, application } = req.body;
+//     const images = req.files ? req.files.map(file => file.path) : [];
+
+//     // Find the product by primary key
+//     const productDetails = await ProductDetails.findByPk(productId);
+//     if (!productDetails) {
+//       return apiResponse.notFoundResponse(res, 'Product not found');
+//     }
+
+//     // Update product details
+//     productDetails.productName = productName || productDetails.productName;
+//     productDetails.application = application || productDetails.application;
+//     productDetails.isActive = req.body.isActive !== undefined ? req.body.isActive : productDetails.isActive;
+//     productDetails.isDelete = req.body.isDelete !== undefined ? req.body.isDelete : productDetails.isDelete;
+//     await productDetails.save();
+
+//     // Handle images
+//     // Remove existing images if not provided in the new request
+//     if (images.length > 0) {
+//       // Find existing images
+//       const existingImages = await ProductImages.findAll({ where: { ProductDetailId: productId } });
+      
+//       // Delete images that are not in the new list
+//       const imagePaths = images.map(img => img.split('/').pop());
+//       await ProductImages.destroy({
+//         where: {
+//           ProductDetailId: productId,
+//           img: {
+//             [Op.notIn]: imagePaths
+//           }
+//         }
+//       });
+
+//       // Add or update images
+//       await Promise.all(images.map(img => {
+//         return ProductImages.upsert({
+//           img,
+//           ProductDetailId: productId // Set the foreign key
+//         });
+//       }));
+//     }
+
+//     // Fetch updated product details with images
+//     const updatedProductDetails = await ProductDetails.findByPk(productId, {
+//       include: [{
+//         model: ProductImages,
+//         as: 'images'
+//       }]
+//     });
+
+//     return apiResponse.successResponseWithData(
+//       res,
+//       'Product details updated successfully',
+//       updatedProductDetails
+//     );
+//   } catch (error) {
+//     console.error('Update product details failed', error);
+//     return apiResponse.ErrorResponse(res, 'Update product details failed');
+//   }
+// };
+
+
 exports.updateProductDetails = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -77,11 +190,10 @@ exports.updateProductDetails = async (req, res) => {
     await productDetails.save();
 
     // Handle images
-    // Remove existing images if not provided in the new request
     if (images.length > 0) {
       // Find existing images
       const existingImages = await ProductImages.findAll({ where: { ProductDetailId: productId } });
-      
+
       // Delete images that are not in the new list
       const imagePaths = images.map(img => img.split('/').pop());
       await ProductImages.destroy({
@@ -117,10 +229,14 @@ exports.updateProductDetails = async (req, res) => {
     );
   } catch (error) {
     console.error('Update product details failed', error);
+
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return apiResponse.ErrorResponse(res, 'Duplicate entry: Product details already exist');
+    }
+
     return apiResponse.ErrorResponse(res, 'Update product details failed');
   }
 };
-
 
 
 exports.isActiveStatus = async (req, res) => {
