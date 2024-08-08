@@ -45,6 +45,7 @@ exports.addProductDetails = async (req, res) => {
     const { productName, application } = req.body;
     const images = req.files ? req.files.map(file => file.path) : [];
 
+    // Create the product details entry
     const productDetails = await ProductDetails.create({
       productName,
       application,
@@ -52,16 +53,20 @@ exports.addProductDetails = async (req, res) => {
       isDelete: false,
     });
 
-    // Create ProductImages entries for each image with the correct foreign key
-    const createdImages = await Promise.all(images.map(img => {
-      return ProductImages.create({ 
-        img, 
-        ProductDetailId: productDetails.id,
-        productName // Set the foreign key
-      });
-    }));
+    let createdImages = [];
 
-    productDetails.setDataValue('images', createdImages); // Attach images to productDetails
+    // Only create ProductImages if there are images to associate
+    if (images.length > 0) {
+      createdImages = await Promise.all(images.map(img => {
+        return ProductImages.create({ 
+          img, 
+          ProductDetailId: productDetails.id,
+        });
+      }));
+    }
+
+    // Attach images to productDetails (if any)
+    productDetails.setDataValue('images', createdImages);
 
     return apiResponse.successResponseWithData(
       res,
@@ -78,6 +83,7 @@ exports.addProductDetails = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Add product details failed');
   }
 };
+
 
 exports.getAllProductDetails = async (req, res) => {
   try {
@@ -189,7 +195,7 @@ exports.updateProductDetails = async (req, res) => {
     productDetails.isDelete = req.body.isDelete !== undefined ? req.body.isDelete : productDetails.isDelete;
     await productDetails.save();
 
-    // Handle images
+    // Handle images only if they are provided
     if (images.length > 0) {
       // Find existing images
       const existingImages = await ProductImages.findAll({ where: { ProductDetailId: productId } });
@@ -237,6 +243,7 @@ exports.updateProductDetails = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Update product details failed');
   }
 };
+
 
 
 exports.isActiveStatus = async (req, res) => {
