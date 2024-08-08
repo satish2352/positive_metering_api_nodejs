@@ -11,7 +11,7 @@ const sequelize = require('../config/database');
 exports.getAllProductData = async (req, res) => {
   try {
     const { productId } = req.params;
-
+    const baseURL = `${req.protocol}://${req.get("host")}/`;
     // Fetch product details with images
     const productDetails = await ProductDetails.findByPk(productId, {
       include: [{
@@ -20,6 +20,12 @@ exports.getAllProductData = async (req, res) => {
       }]
     });
 
+    productDetails.forEach(product => {
+      product.images.forEach(image => {
+        image.img = baseURL + image.img;
+      });
+    });
+    
     if (!productDetails) {
       return apiResponse.notFoundResponse(res, 'Product not found');
     }
