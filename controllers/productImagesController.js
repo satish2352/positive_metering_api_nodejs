@@ -81,7 +81,8 @@ exports.addProductImage = async (req, res) => {
 exports.getProductImages = async (req, res) => {
   try {
     const productImages = await ProductImages.findAll();
-
+    console.log("productImages", productImages);
+    
     return apiResponse.successResponseWithData(
       res,
       "Product images retrieved successfully",
