@@ -66,23 +66,16 @@ exports.addTeamMember = async (req, res) => {
     const { name, designation, description, position_no } = req.body;
     const img = req.file ? req.file.path : null;
 
-    // Lock all rows that might be affected
-    const affectedRows = await Team.findAll({
-      where: { position_no: { [Sequelize.Op.gte]: position_no }, isDelete: false },
-      lock: transaction.LOCK.UPDATE,
-      transaction,
-    });
-
-    // Increment positions of existing members
+    // Step 1: Temporarily increment all positions by 2 to create space
     await Team.update(
-      { position_no: Sequelize.literal('position_no + 1') },
+      { position_no: Sequelize.literal('position_no + 2') },
       { 
         where: { position_no: { [Sequelize.Op.gte]: position_no }, isDelete: false },
-        transaction
+        transaction,
       }
     );
 
-    // Create the new team member
+    // Step 2: Insert the new team member at the specified position
     const teamMember = await Team.create({
       img,
       name,
@@ -92,6 +85,18 @@ exports.addTeamMember = async (req, res) => {
       isActive: true,
       isDelete: false,
     }, { transaction });
+
+    // Step 3: Normalize the positions back to consecutive numbers
+    const teamMembers = await Team.findAll({
+      where: { isDelete: false },
+      order: [['position_no', 'ASC']],
+      transaction,
+    });
+
+    for (let i = 0; i < teamMembers.length; i++) {
+      teamMembers[i].position_no = i + 1; // Assign new consecutive position numbers
+      await teamMembers[i].save({ transaction });
+    }
 
     await transaction.commit();
 
@@ -106,6 +111,7 @@ exports.addTeamMember = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Add team member failed');
   }
 };
+
 
 // Update an existing team member
 exports.updateTeamMember = async (req, res) => {
