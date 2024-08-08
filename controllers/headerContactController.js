@@ -24,29 +24,16 @@ exports.addHeaderContact = async (req, res) => {
 exports.updateHeaderContact = async (req, res) => {
   try {
     const { id } = req.params;
-    const { phone1, phone2 } = req.body;
-    
-    // Log incoming data
-    console.log('Incoming data:', { id, phone1, phone2 });
-
     const headerContact = await HeaderContact.findByPk(id);
     
-    // Log retrieved contact
-    console.log('Retrieved HeaderContact:', headerContact);
-
     if (!headerContact) {
       return apiResponse.notFoundResponse(res, "Header contact not found");
     }
 
-    // Log before saving
-    console.log('Before update:', headerContact);
-    headerContact.phone1 = phone1;
-    headerContact.phone2 = phone2;
+    headerContact.phone1 = "1234567890"; // Hardcoded values for testing
+    headerContact.phone2 = "0987654321";
     await headerContact.save();
     
-    // Log after saving
-    console.log('After update:', headerContact);
-
     return apiResponse.successResponseWithData(
       res,
       "Header contact updated successfully",
