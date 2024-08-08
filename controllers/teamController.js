@@ -5,17 +5,73 @@ const apiResponse = require('../helper/apiResponse');
 const { validationResult } = require('express-validator');
 
 // Add a new team member
+// exports.addTeamMember = async (req, res) => {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return apiResponse.ErrorResponse(res, errors.array().map(err => err.msg).join(', '));
+//   }
+
+//   const transaction = await sequelize.transaction();
+  
+//   try {
+//     const { name, designation, description, position_no } = req.body;
+//     const img = req.file ? req.file.path : null;
+
+//     // Increment positions of existing members
+//     await Team.update(
+//       { position_no: Sequelize.literal('position_no + 1') },
+//       { 
+//         where: { position_no: { [Sequelize.Op.gte]: position_no }, isDelete: false },
+//         transaction
+//       }
+//     );
+
+//     // Create the new team member
+//     const teamMember = await Team.create({
+//       img,
+//       name,
+//       designation,
+//       description,
+//       position_no,
+//       isActive: true,
+//       isDelete: false,
+//     }, { transaction });
+
+//     await transaction.commit();
+
+//     return apiResponse.successResponseWithData(
+//       res,
+//       'Team member added successfully',
+//       teamMember
+//     );
+//   } catch (error) {
+//     await transaction.rollback();
+//     console.error('Add team member failed', error);
+//     return apiResponse.ErrorResponse(res, 'Add team member failed');
+//   }
+// };
+
+// Add a new team member
 exports.addTeamMember = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return apiResponse.ErrorResponse(res, errors.array().map(err => err.msg).join(', '));
   }
 
-  const transaction = await sequelize.transaction();
-  
+  const transaction = await sequelize.transaction({
+    isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.SERIALIZABLE,
+  });
+
   try {
     const { name, designation, description, position_no } = req.body;
     const img = req.file ? req.file.path : null;
+
+    // Lock all rows that might be affected
+    const affectedRows = await Team.findAll({
+      where: { position_no: { [Sequelize.Op.gte]: position_no }, isDelete: false },
+      lock: transaction.LOCK.UPDATE,
+      transaction,
+    });
 
     // Increment positions of existing members
     await Team.update(
