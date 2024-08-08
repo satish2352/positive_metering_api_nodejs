@@ -80,13 +80,23 @@ exports.addProductImage = async (req, res) => {
 
 exports.getProductImages = async (req, res) => {
   try {
+    const baseUrl = `${req.protocol}://${req.get('host')}/`;
     const productImages = await ProductImages.findAll();
-    console.log("productImages", productImages);
-    
+
+        // Map productImages to prepend base URL to img field
+        const imagesWithBaseUrl = productImages.map(image => ({
+          id: image.id,
+          img: baseUrl + image.img,
+          ProductDetailId: image.ProductDetailId,
+          productName: image.productName,
+          createdAt: image.createdAt,
+          updatedAt: image.updatedAt
+        }));
+
     return apiResponse.successResponseWithData(
       res,
       "Product images retrieved successfully",
-      productImages
+      imagesWithBaseUrl
     );
   } catch (error) {
     console.error("Get product images failed", error);
