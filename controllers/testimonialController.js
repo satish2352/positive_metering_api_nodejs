@@ -1,5 +1,5 @@
-const Testimonial = require('../models/Testimonial');
-const apiResponse = require('../helper/apiResponse');
+const Testimonial = require("../models/Testimonial");
+const apiResponse = require("../helper/apiResponse");
 
 exports.addTestimonial = async (req, res) => {
   try {
@@ -15,13 +15,16 @@ exports.addTestimonial = async (req, res) => {
       isDelete: false,
     });
 
-    return apiResponse.successResponseWithData(res, 'Testimonial added successfully', testimonial);
+    return apiResponse.successResponseWithData(
+      res,
+      "Testimonial added successfully",
+      testimonial
+    );
   } catch (error) {
-    console.error('Add testimonial failed', error);
-    return apiResponse.ErrorResponse(res, 'Add testimonial failed');
+    console.error("Add testimonial failed", error);
+    return apiResponse.ErrorResponse(res, "Add testimonial failed");
   }
 };
-
 
 exports.updateTestimonial = async (req, res) => {
   try {
@@ -30,7 +33,7 @@ exports.updateTestimonial = async (req, res) => {
 
     const testimonial = await Testimonial.findByPk(id);
     if (!testimonial) {
-      return apiResponse.notFoundResponse(res, 'Testimonial not found');
+      return apiResponse.notFoundResponse(res, "Testimonial not found");
     }
 
     testimonial.name = name;
@@ -41,19 +44,25 @@ exports.updateTestimonial = async (req, res) => {
 
     await testimonial.save();
 
-    return apiResponse.successResponseWithData(res, 'Testimonial updated successfully', testimonial);
+    return apiResponse.successResponseWithData(
+      res,
+      "Testimonial updated successfully",
+      testimonial
+    );
   } catch (error) {
-    console.error('Update testimonial failed', error);
-    return apiResponse.ErrorResponse(res, 'Update testimonial failed');
+    console.error("Update testimonial failed", error);
+    return apiResponse.ErrorResponse(res, "Update testimonial failed");
   }
 };
 
-
 exports.getTestimonials = async (req, res) => {
   try {
-    const testimonials = await Testimonial.findAll({ where: { isDelete: false } });
+    const testimonials = await Testimonial.findAll({
+      where: { isDelete: false },
+    });
 
-    const testimonialsFormatted = testimonials.map(testimonial => ({
+    const testimonialsFormatted = testimonials.map((testimonial) => ({
+      id: testimonial.id,
       name: testimonial.name,
       company_Name: testimonial.company_Name,
       review: testimonial.review,
@@ -61,13 +70,16 @@ exports.getTestimonials = async (req, res) => {
       experience: testimonial.experience,
     }));
 
-    return apiResponse.successResponseWithData(res, 'Testimonials retrieved successfully', testimonialsFormatted);
+    return apiResponse.successResponseWithData(
+      res,
+      "Testimonials retrieved successfully",
+      testimonialsFormatted
+    );
   } catch (error) {
-    console.error('Get testimonials failed', error);
-    return apiResponse.ErrorResponse(res, 'Get testimonials failed');
+    console.error("Get testimonials failed", error);
+    return apiResponse.ErrorResponse(res, "Get testimonials failed");
   }
 };
-
 
 exports.isActiveStatus = async (req, res) => {
   try {
@@ -75,19 +87,22 @@ exports.isActiveStatus = async (req, res) => {
     const testimonial = await Testimonial.findByPk(id);
 
     if (!testimonial) {
-      return apiResponse.notFoundResponse(res, 'Testimonial not found');
+      return apiResponse.notFoundResponse(res, "Testimonial not found");
     }
 
     testimonial.isActive = !testimonial.isActive;
     await testimonial.save();
 
-    return apiResponse.successResponseWithData(res, 'Testimonial status updated successfully', testimonial);
+    return apiResponse.successResponseWithData(
+      res,
+      "Testimonial status updated successfully",
+      testimonial
+    );
   } catch (error) {
-    console.error('Toggle testimonial status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle testimonial status failed');
+    console.error("Toggle testimonial status failed", error);
+    return apiResponse.ErrorResponse(res, "Toggle testimonial status failed");
   }
 };
-
 
 exports.isDeleteStatus = async (req, res) => {
   try {
@@ -95,16 +110,22 @@ exports.isDeleteStatus = async (req, res) => {
     const testimonial = await Testimonial.findByPk(id);
 
     if (!testimonial) {
-      return apiResponse.notFoundResponse(res, 'Testimonial not found');
+      return apiResponse.notFoundResponse(res, "Testimonial not found");
     }
 
     testimonial.isDelete = !testimonial.isDelete;
     await testimonial.save();
 
-    return apiResponse.successResponseWithData(res, 'Testimonial delete status updated successfully', testimonial);
+    return apiResponse.successResponseWithData(
+      res,
+      "Testimonial delete status updated successfully",
+      testimonial
+    );
   } catch (error) {
-    console.error('Toggle testimonial delete status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle testimonial delete status failed');
+    console.error("Toggle testimonial delete status failed", error);
+    return apiResponse.ErrorResponse(
+      res,
+      "Toggle testimonial delete status failed"
+    );
   }
 };
-
