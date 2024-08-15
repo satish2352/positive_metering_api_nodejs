@@ -1,18 +1,49 @@
 const Contact = require('../models/CarousalForms');
 const apiResponse = require('../helper/apiResponse');
+const nodemailer = require('nodemailer');
+
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 exports.addContact = async (req, res) => {
   try {
     const { name, email, mobile, message } = req.body;
 
+    // Create the new contact in the database
     const contact = await Contact.create({ name, email, mobile, message });
+
+    // Email content
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_SENT_TO, // Replace with your email
+      subject: 'New Contact Form Submission',
+      text: `You have a new contact form submission:\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\nMessage: ${message}`,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Failed to send email:', error);
+        // Still return a success response even if the email fails
+        return apiResponse.successResponseWithData(res, 'Contact added successfully, but email notification failed', contact);
+      } else {
+        console.log('Email sent:', info.response);
+      }
+    });
+
+    // Return success response
     return apiResponse.successResponseWithData(res, 'Contact added successfully', contact);
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
-      // Extract the field that caused the unique constraint error
       const fields = error.errors.map((err) => err.path);
       let message = 'Validation error: ';
-      
+
       if (fields.includes('email')) {
         message += 'Email already exists. ';
       }
@@ -59,7 +90,7 @@ exports.updateContact = async (req, res) => {
     if (error.name === 'SequelizeUniqueConstraintError') {
       const fields = error.errors.map((err) => err.path);
       let message = 'Validation error: ';
-      
+
       if (fields.includes('email')) {
         message += 'Email already exists. ';
       }

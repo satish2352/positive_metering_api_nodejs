@@ -1,11 +1,24 @@
+// controllers/subscribeController.js
 const Subscribe = require('../models/Subscribe');
 const apiResponse = require('../helper/apiResponse');
 
-exports.addSubscribe = async (req, res) => {
+// Function to add a new subscriber and set email options for the middleware
+exports.addSubscribe = async (req, res, next) => {
   try {
     const { email } = req.body;
 
     const subscribe = await Subscribe.create({ email });
+
+    // Set email options in the request object
+    req.emailOptions = {
+      to: process.env.EMAIL_SENT_TO, // Change to your desired notification email
+      subject: 'New Subscriber Added',
+      text: `A new subscriber with email ${email} has joined.`,
+    };
+
+    // Call next middleware to send the email
+    next();
+
     return apiResponse.successResponseWithData(res, 'Subscription added successfully', subscribe);
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
@@ -17,7 +30,7 @@ exports.addSubscribe = async (req, res) => {
   }
 };
 
-
+// Function to retrieve all active (not deleted) subscribers
 exports.getSubscribes = async (req, res) => {
   try {
     const subscribes = await Subscribe.findAll({ where: { isDelete: false } });
@@ -28,6 +41,7 @@ exports.getSubscribes = async (req, res) => {
   }
 };
 
+// Function to update a subscriber's email
 exports.updateSubscribe = async (req, res) => {
   try {
     const { id } = req.params;
@@ -48,6 +62,7 @@ exports.updateSubscribe = async (req, res) => {
   }
 };
 
+// Function to soft delete a subscriber
 exports.deleteSubscribe = async (req, res) => {
   try {
     const { id } = req.params;

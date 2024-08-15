@@ -3,10 +3,18 @@ const apiResponse = require('../helper/apiResponse');
 
 exports.addTestimonial = async (req, res) => {
   try {
-    const { title, review, star } = req.body;
-    const img = req.file ? req.file.path : null;
+    const { name, company_Name, review, star, experience } = req.body;
 
-    const testimonial = await Testimonial.create({ img, title, review, star, isActive: true, isDelete: false });
+    const testimonial = await Testimonial.create({
+      name,
+      company_Name,
+      review,
+      star,
+      experience: parseInt(experience, 10), // Convert experience to integer
+      isActive: true,
+      isDelete: false,
+    });
+
     return apiResponse.successResponseWithData(res, 'Testimonial added successfully', testimonial);
   } catch (error) {
     console.error('Add testimonial failed', error);
@@ -14,21 +22,23 @@ exports.addTestimonial = async (req, res) => {
   }
 };
 
+
 exports.updateTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, review, star } = req.body;
-    const img = req.file ? req.file.path : null;
+    const { name, company_Name, review, star, experience } = req.body;
 
     const testimonial = await Testimonial.findByPk(id);
     if (!testimonial) {
       return apiResponse.notFoundResponse(res, 'Testimonial not found');
     }
 
-    testimonial.img = img || testimonial.img;
-    testimonial.title = title;
+    testimonial.name = name;
+    testimonial.company_Name = company_Name;
     testimonial.review = review;
     testimonial.star = star;
+    testimonial.experience = parseInt(experience, 10); // Convert experience to integer
+
     await testimonial.save();
 
     return apiResponse.successResponseWithData(res, 'Testimonial updated successfully', testimonial);
@@ -38,27 +48,26 @@ exports.updateTestimonial = async (req, res) => {
   }
 };
 
+
 exports.getTestimonials = async (req, res) => {
   try {
     const testimonials = await Testimonial.findAll({ where: { isDelete: false } });
-    
-    // Base URL for images
-    const baseUrl = `${req.protocol}://${req.get('host')}/`; // Adjust according to your setup
-    console.log("baseUrl....", baseUrl);
-    const testimonialsWithBaseUrl = testimonials.map(testimonial => {
-      console.log("testimonial.img", testimonial.img);
-      return {
-        ...testimonial.toJSON(), // Convert Sequelize instance to plain object
-        img: testimonial.img ? baseUrl + testimonial.img.replace(/\\/g, '/') : null 
-      };
-    });
 
-    return apiResponse.successResponseWithData(res, 'Testimonials retrieved successfully', testimonialsWithBaseUrl);
+    const testimonialsFormatted = testimonials.map(testimonial => ({
+      name: testimonial.name,
+      company_Name: testimonial.company_Name,
+      review: testimonial.review,
+      star: testimonial.star,
+      experience: testimonial.experience,
+    }));
+
+    return apiResponse.successResponseWithData(res, 'Testimonials retrieved successfully', testimonialsFormatted);
   } catch (error) {
     console.error('Get testimonials failed', error);
     return apiResponse.ErrorResponse(res, 'Get testimonials failed');
   }
 };
+
 
 exports.isActiveStatus = async (req, res) => {
   try {
@@ -79,6 +88,7 @@ exports.isActiveStatus = async (req, res) => {
   }
 };
 
+
 exports.isDeleteStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -97,3 +107,4 @@ exports.isDeleteStatus = async (req, res) => {
     return apiResponse.ErrorResponse(res, 'Toggle testimonial delete status failed');
   }
 };
+

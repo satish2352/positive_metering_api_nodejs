@@ -1,13 +1,22 @@
 const UploadCV = require('../models/UploadCV');
 const apiResponse = require('../helper/apiResponse');
 
-exports.addUploadCV = async (req, res) => {
+exports.addUploadCV = async (req, res, next) => {
   try {
     const { name, email, phone, subject, message } = req.body;
     const cv = req.file ? req.file.path : null;
 
     const uploadCV = await UploadCV.create({ name, email, phone, subject, message, cv, isActive: true, isDelete: false });
-    return apiResponse.successResponseWithData(res, 'CV uploaded successfully', uploadCV);
+
+    // Set email options for the sendEmail middleware
+    req.emailOptions = {
+      to: process.env.EMAIL_SENT_TO, // Replace with your email
+      subject: 'New Job Application',
+      text: `A new CV has been uploaded:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nSubject: ${subject}\nMessage: ${message}\nCV:${req.protocol}://${req.get('host')}/${cv}`,
+    };
+
+    // Proceed to next middleware (sendEmail)
+    next();
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
       const fields = error.errors.map((err) => err.path);

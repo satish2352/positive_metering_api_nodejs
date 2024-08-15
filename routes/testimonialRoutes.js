@@ -1,5 +1,5 @@
 const express = require('express');
-const { upload } = require('../middleware/multer');
+const authenticateToken = require('../middleware/auth');
 const { validateTestimonial, validateTestimonialId } = require('../validations/testimonialValidation');
 const {
   addTestimonial,
@@ -8,12 +8,11 @@ const {
   isActiveStatus,
   isDeleteStatus
 } = require('../controllers/testimonialController');
-const authenticateToken = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/create-testimonials', upload.single('img'), authenticateToken, validateTestimonial, addTestimonial);
-router.put('/update-testimonials/:id', upload.single('img'), authenticateToken, validateTestimonial, validateTestimonialId, updateTestimonial);
+router.post('/create-testimonials', authenticateToken, validateTestimonial, addTestimonial);
+router.put('/update-testimonials/:id', authenticateToken, validateTestimonial, validateTestimonialId, updateTestimonial);
 router.get('/get-testimonials', getTestimonials);
 router.get('/find-testimonials', authenticateToken, getTestimonials);
 router.put('/isactive-testimonial/:id', authenticateToken, validateTestimonialId, isActiveStatus);

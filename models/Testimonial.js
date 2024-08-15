@@ -2,13 +2,13 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Testimonial = sequelize.define('Testimonial', {
-  img: {
+  name: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
-  title: {
+  company_Name: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   review: {
     type: DataTypes.TEXT,
@@ -17,6 +17,10 @@ const Testimonial = sequelize.define('Testimonial', {
   star: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  experience: {
+    type: DataTypes.INTEGER, // Integer for years of experience
+    allowNull: true,
   },
   isActive: {
     type: DataTypes.BOOLEAN,
