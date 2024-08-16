@@ -3,18 +3,19 @@ const apiResponse = require("../helper/apiResponse");
 
 exports.addTestimonial = async (req, res) => {
   try {
-    const { name, company_Name, review, star, experience } = req.body;
+    const { name, experience, company_Name, review, star } = req.body;
+    const img = req.file ? req.file.path : null;
 
     const testimonial = await Testimonial.create({
+      img,
       name,
+      experience,
       company_Name,
       review,
       star,
-      experience: parseInt(experience, 10), // Convert experience to integer
       isActive: true,
       isDelete: false,
     });
-
     return apiResponse.successResponseWithData(
       res,
       "Testimonial added successfully",
@@ -29,19 +30,20 @@ exports.addTestimonial = async (req, res) => {
 exports.updateTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, company_Name, review, star, experience } = req.body;
+    const { review, star,name,experience,company_Name } = req.body;
+    const img = req.file ? req.file.path : null;
 
     const testimonial = await Testimonial.findByPk(id);
     if (!testimonial) {
       return apiResponse.notFoundResponse(res, "Testimonial not found");
     }
 
+    testimonial.img = img || testimonial.img;
     testimonial.name = name;
+    testimonial.experience = experience;
     testimonial.company_Name = company_Name;
     testimonial.review = review;
     testimonial.star = star;
-    testimonial.experience = parseInt(experience, 10); // Convert experience to integer
-
     await testimonial.save();
 
     return apiResponse.successResponseWithData(
@@ -61,19 +63,23 @@ exports.getTestimonials = async (req, res) => {
       where: { isDelete: false },
     });
 
-    const testimonialsFormatted = testimonials.map((testimonial) => ({
-      id: testimonial.id,
-      name: testimonial.name,
-      company_Name: testimonial.company_Name,
-      review: testimonial.review,
-      star: testimonial.star,
-      experience: testimonial.experience,
-    }));
+    // Base URL for images
+    const baseUrl = `${req.protocol}://${req.get("host")}/`; // Adjust according to your setup
+    console.log("baseUrl....", baseUrl);
+    const testimonialsWithBaseUrl = testimonials.map((testimonial) => {
+      console.log("testimonial.img", testimonial.img);
+      return {
+        ...testimonial.toJSON(), // Convert Sequelize instance to plain object
+        img: testimonial.img
+          ? baseUrl + testimonial.img.replace(/\\/g, "/")
+          : null,
+      };
+    });
 
     return apiResponse.successResponseWithData(
       res,
       "Testimonials retrieved successfully",
-      testimonialsFormatted
+      testimonialsWithBaseUrl
     );
   } catch (error) {
     console.error("Get testimonials failed", error);
