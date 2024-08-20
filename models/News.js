@@ -1,8 +1,12 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const NewsEvent = sequelize.define('NewsEvent', {
+const NewsEvent = sequelize.define('News', {
   img: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  pdf: { // Add this field
     type: DataTypes.STRING,
     allowNull: true,
   },

@@ -10,10 +10,12 @@ exports.addNewsEvent = async (req, res) => {
 
   try {
     const { title, shortDesc, longDesc } = req.body;
-    const img = req.file ? req.file.path : null;
+    const img = req.files['img'] ? req.files['img'][0].path : null;
+    const pdf = req.files['pdf'] ? req.files['pdf'][0].path : null;
 
     const newsEvent = await NewsEvent.create({
       img,
+      pdf,
       title,
       shortDesc,
       longDesc,
@@ -41,7 +43,8 @@ exports.updateNewsEvent = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, shortDesc, longDesc } = req.body;
-    const img = req.file ? req.file.path : null;
+    const img = req.files['img'] ? req.files['img'][0].path : null;
+    const pdf = req.files['pdf'] ? req.files['pdf'][0].path : null;
 
     const newsEvent = await NewsEvent.findByPk(id);
     if (!newsEvent) {
@@ -49,6 +52,7 @@ exports.updateNewsEvent = async (req, res) => {
     }
 
     newsEvent.img = img || newsEvent.img;
+    newsEvent.pdf = pdf || newsEvent.pdf;
     newsEvent.title = title;
     newsEvent.shortDesc = shortDesc;
     newsEvent.longDesc = longDesc;
@@ -73,6 +77,7 @@ exports.getNewsEvents = async (req, res) => {
     const newsEventsWithBaseUrl = newsEvents.map(event => ({
       ...event.toJSON(),
       img: event.img ? baseUrl + event.img.replace(/\\/g, '/') : null,
+      pdf: event.pdf ? baseUrl + event.pdf.replace(/\\/g, '/') : null,
     }));
 
     return apiResponse.successResponseWithData(

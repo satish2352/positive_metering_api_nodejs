@@ -1,5 +1,5 @@
 const express = require('express');
-const { upload } = require('../middleware/multer');
+const { uploadFiles } = require('../middleware/fileUploadMiddleware');
 const {
   addNewsEvent,
   updateNewsEvent,
@@ -15,8 +15,8 @@ const {
 
 const router = express.Router();
 
-router.post('/create-news', upload.single('img'), authenticateToken, validateNewsEvent, addNewsEvent);
-router.put('/update-news/:id', upload.single('img'), authenticateToken, validateNewsEvent, validateNewsEventId, updateNewsEvent);
+router.post('/create-news', uploadFiles, authenticateToken, validateNewsEvent, addNewsEvent);
+router.put('/update-news/:id', uploadFiles, authenticateToken, validateNewsEvent, validateNewsEventId, updateNewsEvent);
 router.get('/get-news', getNewsEvents);
 router.put('/isactive-news/:id', authenticateToken, validateNewsEventId, isActiveStatus);
 router.delete('/isdelete-news/:id', authenticateToken, validateNewsEventId, isDeleteStatus);
