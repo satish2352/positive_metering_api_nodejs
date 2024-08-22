@@ -11,34 +11,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-exports.addContact = async (req, res) => {
+exports.addContact = async (req, res, next) => {
   try {
     const { name, email, mobile, message } = req.body;
 
     // Create the new contact in the database
     const contact = await Contact.create({ name, email, mobile, message });
 
-    // Email content
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_SENT_TO, // Replace with your email
+    // Set email options in the request object
+    req.emailOptions = {
+      to: process.env.EMAIL_SENT_TO,
       subject: 'New Contact Form Submission',
       text: `You have a new contact form submission:\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\nMessage: ${message}`,
     };
 
-    // Send the email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error('Failed to send email:', error);
-        // Still return a success response even if the email fails
-        return apiResponse.successResponseWithData(res, 'Contact added successfully, but email notification failed', contact);
-      } else {
-        console.log('Email sent:', info.response);
-      }
-    });
+    // Call next middleware to send the email
+    return next();  // Ensure `return` is used to prevent further execution
 
-    // Return success response
-    return apiResponse.successResponseWithData(res, 'Contact added successfully', contact);
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
       const fields = error.errors.map((err) => err.path);

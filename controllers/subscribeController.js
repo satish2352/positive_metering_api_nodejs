@@ -15,7 +15,6 @@ exports.addSubscribe = async (req, res, next) => {
       subject: 'New Subscriber Added',
       text: `A new subscriber with email ${email} has joined.`,
     };
-
     // Call next middleware to send the email
     next();
 
