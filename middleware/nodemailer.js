@@ -1,12 +1,11 @@
-// middleware/emailMiddleware.js
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_SECURE, 
+  secure: process.env.EMAIL_SECURE === 'true', // Ensure secure is a boolean
   auth: {
-    user: process.env.EMAIL_USER, 
+    user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS, 
   }
 });
@@ -24,10 +23,10 @@ const sendEmail = async (req, res, next) => {
     });
 
     console.log('Email sent successfully');
-    next();
+    next(); // Call next to proceed to the next middleware or controller
   } catch (error) {
     console.error('Failed to send email:', error);
-    return res.status(500).json({ message: 'Failed to send email' });
+    next(error); // Pass the error to the next middleware
   }
 };
 

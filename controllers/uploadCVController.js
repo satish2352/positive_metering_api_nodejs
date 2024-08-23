@@ -1,7 +1,8 @@
 const UploadCV = require('../models/UploadCV');
 const apiResponse = require('../helper/apiResponse');
+const sendEmail = require('../middleware/nodemailer');
 
-exports.addUploadCV = async (req, res, next) => {
+exports.addUploadCV = async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
     const cv = req.file ? req.file.path : null;
@@ -10,18 +11,28 @@ exports.addUploadCV = async (req, res, next) => {
 
     // Set email options for the sendEmail middleware
     req.emailOptions = {
-      to: process.env.EMAIL_SENT_TO, // Replace with your email
+      to: process.env.EMAIL_SENT_TO,
       subject: 'New Job Application',
       text: `A new CV has been uploaded:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nSubject: ${subject}\nMessage: ${message}\nCV:${req.protocol}://${req.get('host')}/${cv}`,
     };
 
-    // Proceed to next middleware (sendEmail)
-    next();
+    // Send the email
+    await sendEmail(req, res, (err) => {
+      if (err) {
+        return apiResponse.ErrorResponse(res, 'Failed to send email');
+      }
+
+      // If the email is sent successfully, return the success response
+      return apiResponse.successResponseWithData(res, 'CV uploaded successfully', uploadCV);
+    });
+
   } catch (error) {
+    console.error('Upload CV failed', error);
+
     if (error.name === 'SequelizeUniqueConstraintError') {
       const fields = error.errors.map((err) => err.path);
       let message = 'Validation error: ';
-      
+
       if (fields.includes('email')) {
         message += 'Email already exists. ';
       }
@@ -32,7 +43,6 @@ exports.addUploadCV = async (req, res, next) => {
       return apiResponse.validationErrorWithData(res, message.trim());
     }
 
-    console.error('Upload CV failed', error);
     return apiResponse.ErrorResponse(res, 'Upload CV failed');
   }
 };
