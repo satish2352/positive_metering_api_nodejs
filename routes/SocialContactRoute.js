@@ -27,6 +27,8 @@ router.put('/socialcontact/:id', authenticateToken, validateSocialContactId, val
 
 // Get social contacts
 router.get('/get-socialcontacts', getSocialContact);
+// Get social contacts
+router.get('/find-socialcontacts', authenticateToken, getSocialContact);
 
 // Toggle social contact status
 router.put('/isactive-social/:id', authenticateToken, validateSocialContactId, isActiveStatus);

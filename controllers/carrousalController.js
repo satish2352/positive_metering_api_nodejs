@@ -1,6 +1,7 @@
 const Carrousal = require("../models/Carrousal");
 const apiResponse = require("../helper/apiResponse");
 const { validationResult } = require('express-validator');
+
 exports.addCarrousal = async (req, res) => {
   try {
     if (!req.file) {
@@ -8,12 +9,15 @@ exports.addCarrousal = async (req, res) => {
     }
 
     const img = req.file.path;
+    const { title } = req.body; // Get title from request body
 
     const carrousal = await Carrousal.create({
       img,
+      title,
       isActive: true,
       isDelete: false,
     });
+
     return apiResponse.successResponseWithData(
       res,
       "Carrousal added successfully",
@@ -34,14 +38,16 @@ exports.updateCarrousal = async (req, res) => {
   try {
     const { id } = req.params;
     const img = req.file ? req.file.path : null; // Handle file upload
+    const { title } = req.body; // Get title from request body
 
     const carrousal = await Carrousal.findByPk(id);
     if (!carrousal) {
       return apiResponse.notFoundResponse(res, 'Carrousal not found');
     }
 
-    // Update the image only if a new one is uploaded
+    // Update the image and title only if new ones are provided
     carrousal.img = img || carrousal.img;
+    carrousal.title = title || carrousal.title;
     await carrousal.save();
 
     return apiResponse.successResponseWithData(
@@ -54,8 +60,6 @@ exports.updateCarrousal = async (req, res) => {
     return apiResponse.ErrorResponse(res, `Update carrousal failed: ${error.message}`);
   }
 };
-
-
 
 exports.getCarrousals = async (req, res) => {
   try {
