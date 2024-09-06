@@ -11,6 +11,43 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// exports.addContact = async (req, res, next) => {
+//   try {
+//     const { name, email, mobile, message } = req.body;
+
+//     // Create the new contact in the database
+//     const contact = await Contact.create({ name, email, mobile, message });
+
+//     // Set email options in the request object
+//     req.emailOptions = {
+//       to: process.env.EMAIL_SENT_TO,
+//       subject: 'New Contact Form Submission',
+//       text: `You have a new contact form submission:\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\nMessage: ${message}`,
+//     };
+
+//     // Call next middleware to send the email
+//     return next();  // Ensure `return` is used to prevent further execution
+
+//   } catch (error) {
+//     if (error.name === 'SequelizeUniqueConstraintError') {
+//       const fields = error.errors.map((err) => err.path);
+//       let message = 'Validation error: ';
+
+//       if (fields.includes('email')) {
+//         message += 'Email already exists. ';
+//       }
+//       if (fields.includes('mobile')) {
+//         message += 'Mobile number already exists.';
+//       }
+
+//       return apiResponse.validationErrorWithData(res, message.trim());
+//     }
+
+//     console.error('Add contact failed', error);
+//     return apiResponse.ErrorResponse(res, 'Add contact failed');
+//   }
+// };
+
 exports.addContact = async (req, res, next) => {
   try {
     const { name, email, mobile, message } = req.body;
@@ -26,7 +63,7 @@ exports.addContact = async (req, res, next) => {
     };
 
     // Call next middleware to send the email
-    return next();  // Ensure `return` is used to prevent further execution
+    return next();
 
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
