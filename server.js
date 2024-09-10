@@ -4,6 +4,7 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 const port = process.env.PORT || 8000;
+const https = require('https');
 const cors = require("cors");
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -30,6 +31,31 @@ app.use(bodyParser.json());
 
 
 app.use("/uploads", express.static("uploads"));
+
+const sslOptions = {
+  key: fs.readFileSync('./ssl/private.key'),
+  cert: fs.readFileSync('./ssl/certificate.crt')
+};
+
+https.createServer(sslOptions, app).listen(443, () => {
+  console.log('Server running on https://localhost:443');
+});
+
+app.use((req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect('https://' + req.headers.host + req.url);
+  }
+  next();
+});
+
+
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "upgrade-insecure-requests");
+  next();
+});
+
+const helmet = require('helmet');
+app.use(helmet());
 
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
