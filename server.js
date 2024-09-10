@@ -54,6 +54,13 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  if (req.protocol === 'http') {
+    return res.redirect('https://' + req.headers.host + req.url);
+  }
+  next();
+});
+
 const helmet = require('helmet');
 app.use(helmet());
 
