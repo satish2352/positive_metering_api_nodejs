@@ -11,7 +11,7 @@ exports.addUploadCV = async (req, res) => {
 
     // Set email options for the sendEmail middleware
     req.emailOptions = {
-      to: process.env.EMAIL_SENT_TO,
+      to: process.env.EMAIL_SENT_TO_HR,
       subject: 'New Job Application',
       text: `A new CV has been uploaded:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nSubject: ${subject}\nMessage: ${message}\nCV:${req.protocol}://${req.get('host')}/${cv}`,
     };
