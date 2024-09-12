@@ -80,8 +80,8 @@ exports.addProductImage = async (req, res) => {
 
 exports.getProductImages = async (req, res) => {
   try {
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const productImages = await ProductImages.findAll();
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const productImages = await ProductImages.findAll();
 
         // Map productImages to prepend base URL to img field
         const imagesWithBaseUrl = productImages.map(image => ({

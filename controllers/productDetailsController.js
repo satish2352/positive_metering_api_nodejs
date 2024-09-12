@@ -87,8 +87,8 @@ exports.addProductDetails = async (req, res) => {
 
 exports.getAllProductDetails = async (req, res) => {
   try {
-    const baseURL = `${req.protocol}://${req.get("host")}/`;
-    const productDetails = await ProductDetails.findAll({
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const productDetails = await ProductDetails.findAll({
       include: [{
         model: ProductImages,
         as: 'images'
@@ -97,7 +97,7 @@ exports.getAllProductDetails = async (req, res) => {
 
     productDetails.forEach(product => {
       product.images.forEach(image => {
-        image.img = baseURL + image.img;
+        image.img = baseUrl + image.img;
       });
     });
 

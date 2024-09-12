@@ -137,8 +137,8 @@ exports.getTeamMembers = async (req, res) => {
       order: [['position_no', 'ASC']] // Sort by position_no
     });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const teamMembersWithBaseUrl = teamMembers.map(member => ({
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const teamMembersWithBaseUrl = teamMembers.map(member => ({
       ...member.toJSON(),
       img: member.img ? baseUrl + member.img.replace(/\\/g, '/') : null,
     }));

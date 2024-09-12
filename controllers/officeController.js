@@ -43,8 +43,8 @@ exports.getOffices = async (req, res) => {
   try {
     const offices = await Office.findAll({ where: { isDelete: false } });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const officesWithBaseUrl = offices.map(office => {
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const officesWithBaseUrl = offices.map(office => {
       return {
         ...office.toJSON(),
         img: office.img ? baseUrl + office.img.replace(/\\/g, '/') : null

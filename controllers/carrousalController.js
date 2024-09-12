@@ -66,7 +66,7 @@ exports.getCarrousals = async (req, res) => {
     const carrousals = await Carrousal.findAll({ where: { isDelete: false } });
 
     // Base URL for images
-    const baseUrl = `${req.protocol}://${req.get("host")}/`;
+    const baseUrl = `${process.env.SERVER_PATH}`;
 
     const carrousalsWithBaseUrl = carrousals.map((carrousal) => {
       return {

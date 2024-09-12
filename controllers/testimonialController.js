@@ -64,8 +64,8 @@ exports.getTestimonials = async (req, res) => {
     });
 
     // Base URL for images
-    const baseUrl = `${req.protocol}://${req.get("host")}/`; // Adjust according to your setup
-    console.log("baseUrl....", baseUrl);
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        console.log("baseUrl....", baseUrl);
     const testimonialsWithBaseUrl = testimonials.map((testimonial) => {
       console.log("testimonial.img", testimonial.img);
       return {

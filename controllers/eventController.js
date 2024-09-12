@@ -66,8 +66,8 @@ exports.getEvents = async (req, res) => {
   try {
     const events = await Event.findAll({ where: { isDelete: false } });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const eventsWithBaseUrl = events.map(event => ({
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const eventsWithBaseUrl = events.map(event => ({
       ...event.toJSON(),
       img: event.img ? baseUrl + event.img.replace(/\\/g, '/') : null,
     }));

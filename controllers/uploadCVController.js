@@ -91,8 +91,8 @@ exports.getUploadCVs = async (req, res) => {
   try {
     const uploadCVs = await UploadCV.findAll({ where: { isDelete: false } });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const uploadCVsWithBaseUrl = uploadCVs.map(cv => {
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const uploadCVsWithBaseUrl = uploadCVs.map(cv => {
       return {
         ...cv.toJSON(),
         cv: cv.cv ? baseUrl + cv.cv.replace(/\\/g, '/') : null

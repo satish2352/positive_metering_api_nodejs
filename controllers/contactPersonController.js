@@ -43,8 +43,8 @@ exports.getContactPersons = async (req, res) => {
   try {
     const contactPersons = await ContactPerson.findAll({ where: { isDelete: false } });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const contactPersonsWithBaseUrl = contactPersons.map(person => {
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const contactPersonsWithBaseUrl = contactPersons.map(person => {
       return {
         ...person.toJSON(),
         img: person.img ? baseUrl + person.img.replace(/\\/g, '/') : null

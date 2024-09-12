@@ -73,8 +73,8 @@ exports.getNewsEvents = async (req, res) => {
   try {
     const newsEvents = await NewsEvent.findAll({ where: { isDelete: false } });
 
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    const newsEventsWithBaseUrl = newsEvents.map(event => ({
+    const baseUrl = `${process.env.SERVER_PATH}`;
+        const newsEventsWithBaseUrl = newsEvents.map(event => ({
       ...event.toJSON(),
       img: event.img ? baseUrl + event.img.replace(/\\/g, '/') : null,
       pdf: event.pdf ? baseUrl + event.pdf.replace(/\\/g, '/') : null,
