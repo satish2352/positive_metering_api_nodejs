@@ -42,7 +42,7 @@ exports.getInfrastructure = async (req, res) => {
     const infrastructure = await Infrastructure.findAll({ where: { isDelete: false } });
     
     // Base URL for images
-    const baseUrl = `${req.protocol}://${req.get('host')}/`; // Adjust according to your setup
+    const baseUrl = `${req.protocol}://${process.env.SERVER_PATH}/`; // Adjust according to your setup
     console.log("baseUrl....", baseUrl);
     const infrastructureWithBaseUrl = infrastructure.map(infrastructure => {
       console.log("infrastructure.img", infrastructure.img);
