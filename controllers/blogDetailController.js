@@ -62,7 +62,7 @@ exports.getBlogDetails = async (req, res) => {
     });
 
     // Base URL for images
-    const baseUrl = `${req.protocol}://${req.get("host")}/`; // Adjust according to your setup
+    const baseUrl = `${process.env.SERVER_PATH}`;
 
     const blogDetailsWithBaseUrl = blogDetails.map((blogDetail) => ({
       ...blogDetail.toJSON(), // Convert Sequelize instance to plain object
