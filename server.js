@@ -133,7 +133,7 @@ const testDbConnection = async () => {
     await sequelize.authenticate();
     console.log("Database connected...");
     await sequelize.sync(); // Ensure the database and model are in sync
-  } catch (err) {
+  } catch (err) { 
     console.error("Error: " + err);
   }
 };
