@@ -6,7 +6,7 @@ const fs = require('fs');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Extract the folder name from the request
-    const folderName = req.baseUrl;
+    const folderName = req.baseUrl; 
     const uploadFolder = `../uploads${folderName}`;
 
     // Ensure the directory exists
