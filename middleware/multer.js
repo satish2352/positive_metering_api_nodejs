@@ -7,15 +7,16 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Extract the folder name from the request
     const folderName = req.baseUrl; 
-    const uploadFolder = `../uploads${folderName}`;
-
+    const uploadFolder = `uploads${folderName}`;
+    console.log("uploadFolder", uploadFolder);
+    
     // Ensure the directory exists
     const uploadPath = path.join(__dirname, '..', uploadFolder);
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
 
-    cb(null, uploadFolder);
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
