@@ -63,6 +63,8 @@ exports.getHomeSlider = async (req, res) => {
 
     // Base URL for images
     const baseUrl = `${process.env.SERVER_PATH}`;
+    console.log("baseUrl", baseUrl);
+    
     const homeSlidersWithBaseUrl = homeSliders.map((homeSlider) => ({
       ...homeSlider.toJSON(),
       img: homeSlider.img ? baseUrl + homeSlider.img.replace(/\\/g, "/") : null,
