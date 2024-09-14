@@ -8,7 +8,6 @@ const storage = multer.diskStorage({
     // Extract the folder name from the request
     const folderName = req.baseUrl; 
     const uploadFolder = `uploads${folderName}`;
-    console.log("uploadFolder", uploadFolder);
     
     // Ensure the directory exists
     const uploadPath = path.join(__dirname, '..', uploadFolder);
