@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
       fs.mkdirSync(uploadPath, { recursive: true });
     }
 
-    cb(null, uploadPath);
+    cb(null, uploadFolder);
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
