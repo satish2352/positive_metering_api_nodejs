@@ -33,6 +33,8 @@
 // module.exports = sendEmail;
 
 const nodemailer = require('nodemailer');
+let pass = process.env.EMAIL_PASS
+console.log("process.env.EMAIL_PASS", process.env.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
