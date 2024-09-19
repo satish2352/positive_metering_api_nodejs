@@ -41,7 +41,10 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
-  }
+  },
+  tls: {
+    rejectUnauthorized: false,  // This will skip certificate validation
+},
 });
 
 // Middleware to send an email and send final response
