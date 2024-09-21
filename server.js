@@ -56,11 +56,14 @@ const blogDetailRoutes = require('./routes/blogDetailRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const OueleadersRoutes = require('./routes/OueleadersRoutes');
+
 const ApplicationRoutes = require('./routes/ApplicationDataRoutes');
 const productImagesRouter = require('./routes/productImagesRoutes')
 app.use('/team', teamRoutes);
 app.use('/news', newsRoutes);
 app.use('/events', eventRoutes);
+app.use('/OueleadersRoutes', OueleadersRoutes);
 app.use('/blogdetails', blogDetailRoutes);
 app.use('/productdetails', productDetailsRoutes);
 app.use('/productname', productNameRoutes);
