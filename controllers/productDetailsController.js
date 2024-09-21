@@ -48,6 +48,7 @@ exports.addProductDetails = async (req, res) => {
     // Create the product details entry
     const productDetails = await ProductDetails.create({
       productName,
+      slug,
       application,
       isActive: true,
       isDelete: false,
@@ -190,6 +191,7 @@ exports.updateProductDetails = async (req, res) => {
 
     // Update product details
     productDetails.productName = productName || productDetails.productName;
+     productDetails.slug = productName || productDetails.slug;
     productDetails.application = application || productDetails.application;
     productDetails.isActive = req.body.isActive !== undefined ? req.body.isActive : productDetails.isActive;
     productDetails.isDelete = req.body.isDelete !== undefined ? req.body.isDelete : productDetails.isDelete;

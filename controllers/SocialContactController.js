@@ -10,6 +10,7 @@ exports.addSocialContact = async (req, res) => {
       email,
       whatsapp,
       linkedin,
+      twitter,
       isActive: true,
       isDelete: false,
     });
@@ -36,6 +37,7 @@ exports.updateSocialContact = async (req, res) => {
     socialContact.instagram = req.body.instagram;
     socialContact.facebook = req.body.facebook;
     socialContact.email = req.body.email;
+    socialContact.twitter = req.body.twitter;
     socialContact.whatsapp = req.body.whatsapp;
     socialContact.linkedin = req.body.linkedin;
     await socialContact.save();

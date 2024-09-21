@@ -18,6 +18,10 @@ const SocialContact = sequelize.define("SocialContact", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  twitter: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   linkedin: {
     type: DataTypes.STRING,
     allowNull: true,

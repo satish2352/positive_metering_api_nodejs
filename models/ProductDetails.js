@@ -10,6 +10,11 @@ const ProductDetails = sequelize.define('ProductDetails', {
     allowNull: false,
     unique: true,
   },
+  slug: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
   application: {
     type: DataTypes.TEXT,
     allowNull: false,
