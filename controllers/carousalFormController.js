@@ -11,43 +11,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// exports.addContact = async (req, res, next) => {
-//   try {
-//     const { name, email, mobile, message } = req.body;
-
-//     // Create the new contact in the database
-//     const contact = await Contact.create({ name, email, mobile, message });
-
-//     // Set email options in the request object
-//     req.emailOptions = {
-//       to: process.env.EMAIL_SENT_TO,
-//       subject: 'New Contact Form Submission',
-//       text: `You have a new contact form submission:\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\nMessage: ${message}`,
-//     };
-
-//     // Call next middleware to send the email
-//     return next();  // Ensure `return` is used to prevent further execution
-
-//   } catch (error) {
-//     if (error.name === 'SequelizeUniqueConstraintError') {
-//       const fields = error.errors.map((err) => err.path);
-//       let message = 'Validation error: ';
-
-//       if (fields.includes('email')) {
-//         message += 'Email already exists. ';
-//       }
-//       if (fields.includes('mobile')) {
-//         message += 'Mobile number already exists.';
-//       }
-
-//       return apiResponse.validationErrorWithData(res, message.trim());
-//     }
-
-//     console.error('Add contact failed', error);
-//     return apiResponse.ErrorResponse(res, 'Add contact failed');
-//   }
-// };
-
 exports.addContact = async (req, res, next) => {
   try {
     const { name, email, mobile, message } = req.body;
@@ -55,36 +18,15 @@ exports.addContact = async (req, res, next) => {
     // Create the new contact in the database
     const contact = await Contact.create({ name, email, mobile, message });
 
-    // Configure the mail transporter
-    const transporter = nodemailer.createTransport({
-      service: 'gmail', // Use your email provider or configure SMTP
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    // Prepare the email content
-    const mailOptions = {
-      from: process.env.EMAIL_USER, // Sender's email
-      to: process.env.EMAIL_SENT_TO, // Recipient's email
-      subject: 'New Contact Submission',
-      text: `A new contact has been submitted:
-            Name: ${name}
-            Email: ${email}
-            Mobile: ${mobile}
-            Message: ${message}`,
+    // Set email options in the request object
+    req.emailOptions = {
+      to: process.env.EMAIL_SENT_TO,
+      subject: 'New Contact Form Submission',
+      text: `You have a new contact form submission:\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\nMessage: ${message}`,
     };
 
-    // Send the email
-    await transporter.sendMail(mailOptions);
-
-    // Return success response
-    return res.status(200).json({
-      success: true,
-      message: 'Contact submitted successfully, and email has been sent.',
-      data: contact,
-    });
+    // Call next middleware to send the email
+    return next();
 
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
