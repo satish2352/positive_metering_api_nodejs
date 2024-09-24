@@ -10,11 +10,10 @@ const sequelize = require('../config/database');
 
 exports.getAllProductData = async (req, res) => {
   try {
-    const { productName } = req.params;
+    const { productId } = req.params;
 
     // Fetch product details with images
-    const productDetails = await ProductDetails.findOne({
-      where: { productName: productName }, 
+    const productDetails = await ProductDetails.findByPk(productId, {
       include: [{
         model: ProductImages,
         as: 'images'
