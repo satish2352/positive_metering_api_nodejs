@@ -13,7 +13,8 @@ exports.getAllProductData = async (req, res) => {
     const { productName } = req.params;
 
     // Fetch product details with images
-    const productDetails = await ProductDetails.findByPk(productId, {
+    const productDetails = await ProductDetails.findOne({
+      where: { name: productName }, 
       include: [{
         model: ProductImages,
         as: 'images'
