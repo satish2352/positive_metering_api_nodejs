@@ -7,7 +7,7 @@ const authenticateToken = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/get-all-productdata/:productId', getAllProductData);
+router.get('/get-all-productdata/:productName', getAllProductData);
 router.delete('/delete-products/:productId',deleteProductAndData);
 router.put('/activate-products/:id',toggleActiveStatusForAll);
 

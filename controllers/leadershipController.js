@@ -1,11 +1,14 @@
 // controllers/leadershipController.js
 
-const Leadership = require('../models/Leadership');
-const apiResponse = require('../helper/apiResponse');
+const Leadership = require("../models/Leadership");
+const apiResponse = require("../helper/apiResponse");
+require("dotenv").config();
+const baseUrl = process.env.SERVER_PATH
 
 exports.addLeadership = async (req, res) => {
   try {
-    const { title, designation, description, facebook, instagram, linkedin } = req.body;
+    const { title, designation, description, facebook, instagram, linkedin } =
+      req.body;
     const img = req.file ? req.file.path : null;
 
     const leadership = await Leadership.create({
@@ -20,22 +23,27 @@ exports.addLeadership = async (req, res) => {
       isDelete: false,
     });
 
-    return apiResponse.successResponseWithData(res, 'Leadership added successfully', leadership);
+    return apiResponse.successResponseWithData(
+      res,
+      "Leadership added successfully",
+      leadership
+    );
   } catch (error) {
-    console.error('Add leadership failed', error);
-    return apiResponse.ErrorResponse(res, 'Add leadership failed');
+    console.error("Add leadership failed", error);
+    return apiResponse.ErrorResponse(res, "Add leadership failed");
   }
 };
 
 exports.updateLeadership = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, designation, description, facebook, instagram, linkedin } = req.body;
+    const { title, designation, description, facebook, instagram, linkedin } =
+      req.body;
     const img = req.file ? req.file.path : null;
 
     const leadership = await Leadership.findByPk(id);
     if (!leadership) {
-      return apiResponse.notFoundResponse(res, 'Leadership not found');
+      return apiResponse.notFoundResponse(res, "Leadership not found");
     }
 
     leadership.title = title;
@@ -48,23 +56,43 @@ exports.updateLeadership = async (req, res) => {
 
     await leadership.save();
 
-    return apiResponse.successResponseWithData(res, 'Leadership updated successfully', leadership);
+    return apiResponse.successResponseWithData(
+      res,
+      "Leadership updated successfully",
+      leadership
+    );
   } catch (error) {
-    console.error('Update leadership failed', error);
-    return apiResponse.ErrorResponse(res, 'Update leadership failed');
+    console.error("Update leadership failed", error);
+    return apiResponse.ErrorResponse(res, "Update leadership failed");
   }
 };
 
 exports.getLeadership = async (req, res) => {
-  try {
-    const leadership = await Leadership.findAll({ where: { isDelete: false } });
-
-    return apiResponse.successResponseWithData(res, 'Leadership retrieved successfully', leadership);
-  } catch (error) {
-    console.error('Get leadership failed', error);
-    return apiResponse.ErrorResponse(res, 'Get leadership failed');
-  }
-};
+    try {
+      
+      console.log("Base URL:", baseUrl);  // Debugging log
+  
+      const leadershipData = await Leadership.findAll({
+        where: { isDelete: false },
+      });
+  
+      const leadershipWithBaseUrl = leadershipData.map((leader) => {
+        return {
+          ...leader.toJSON(),
+          img: leader.img ? baseUrl + leader.img.replace(/\\/g, "/") : null,
+        };
+      });
+  
+      return apiResponse.successResponseWithData(
+        res,
+        "Leadership entries retrieved successfully",
+        leadershipWithBaseUrl
+      );
+    } catch (error) {
+      console.error("Get leadership entries failed", error);
+      return apiResponse.ErrorResponse(res, "Get leadership entries failed");
+    }
+  };
 
 exports.toggleLeadershipStatus = async (req, res) => {
   try {
@@ -72,16 +100,20 @@ exports.toggleLeadershipStatus = async (req, res) => {
     const leadership = await Leadership.findByPk(id);
 
     if (!leadership) {
-      return apiResponse.notFoundResponse(res, 'Leadership not found');
+      return apiResponse.notFoundResponse(res, "Leadership not found");
     }
 
     leadership.isActive = !leadership.isActive;
     await leadership.save();
 
-    return apiResponse.successResponseWithData(res, 'Leadership status updated successfully', leadership);
+    return apiResponse.successResponseWithData(
+      res,
+      "Leadership status updated successfully",
+      leadership
+    );
   } catch (error) {
-    console.error('Toggle leadership status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle leadership status failed');
+    console.error("Toggle leadership status failed", error);
+    return apiResponse.ErrorResponse(res, "Toggle leadership status failed");
   }
 };
 
@@ -91,15 +123,22 @@ exports.toggleLeadershipDelete = async (req, res) => {
     const leadership = await Leadership.findByPk(id);
 
     if (!leadership) {
-      return apiResponse.notFoundResponse(res, 'Leadership not found');
+      return apiResponse.notFoundResponse(res, "Leadership not found");
     }
 
     leadership.isDelete = !leadership.isDelete;
     await leadership.save();
 
-    return apiResponse.successResponseWithData(res, 'Leadership delete status updated successfully', leadership);
+    return apiResponse.successResponseWithData(
+      res,
+      "Leadership delete status updated successfully",
+      leadership
+    );
   } catch (error) {
-    console.error('Toggle leadership delete status failed', error);
-    return apiResponse.ErrorResponse(res, 'Toggle leadership delete status failed');
+    console.error("Toggle leadership delete status failed", error);
+    return apiResponse.ErrorResponse(
+      res,
+      "Toggle leadership delete status failed"
+    );
   }
 };

@@ -10,7 +10,7 @@ const sequelize = require('../config/database');
 
 exports.getAllProductData = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const { productName } = req.params;
 
     // Fetch product details with images
     const productDetails = await ProductDetails.findByPk(productId, {

@@ -61,7 +61,9 @@ const OueleadersRoutes = require('./routes/OueleadersRoutes');
 const ApplicationRoutes = require('./routes/ApplicationDataRoutes');
 const productImagesRouter = require('./routes/productImagesRoutes')
 const leadershipRoutes = require('./routes/leadershipRoutes');
+const about = require('./routes/aboutRoutes');
 
+app.use('/about', about);
 app.use('/leadership', leadershipRoutes);
 app.use('/team', teamRoutes);
 app.use('/news', newsRoutes);
