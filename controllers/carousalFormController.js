@@ -1,33 +1,15 @@
 const Contact = require('../models/CarousalForms');
 const apiResponse = require('../helper/apiResponse');
-const nodemailer = require('nodemailer');
 
-// Configure Nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-exports.addContact = async (req, res, next) => {
+exports.addContact = async (req, res) => {
   try {
     const { name, email, mobile, message } = req.body;
 
     // Create the new contact in the database
     const contact = await Contact.create({ name, email, mobile, message });
 
-    // Set email options in the request object
-    req.emailOptions = {
-      to: process.env.EMAIL_SENT_TO,
-      subject: 'New Contact Form Submission',
-      text: `You have a new contact form submission:\n\nName: ${name}\nEmail: ${email}\nMobile: ${mobile}\nMessage: ${message}`,
-    };
-
-    // Call next middleware to send the email
-    return next();
-
+    // Return success response
+    return apiResponse.successResponseWithData(res, 'Contact added successfully', contact);
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
       const fields = error.errors.map((err) => err.path);
