@@ -1,6 +1,5 @@
 const UploadCV = require("../models/UploadCV");
 const apiResponse = require("../helper/apiResponse");
-const sendEmail = require("../middleware/nodemailer");
 
 exports.addUploadCV = async (req, res) => {
   try {
@@ -18,27 +17,15 @@ exports.addUploadCV = async (req, res) => {
       isDelete: false,
     });
 
-    // Set email options for the sendEmail middleware
-    req.emailOptions = {
-      to: process.env.EMAIL_SENT_TO_HR,
-      subject: "New Job Application",
-      text: `A new CV has been uploaded:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nSubject: ${subject}\nMessage: ${message}\nDownload CV: ${process.env.SERVER_PATH}${cv}`,
-    };
+    // Log the CV path for debugging
     console.log("cv__________", cv);
 
-    // Send the email
-    await sendEmail(req, res, (err) => {
-      if (err) {
-        return apiResponse.ErrorResponse(res, "Failed to send email");
-      }
-
-      // If the email is sent successfully, return the success response
-      return apiResponse.successResponseWithData(
-        res,
-        "CV uploaded successfully",
-        uploadCV
-      );
-    });
+    // Return the success response
+    return apiResponse.successResponseWithData(
+      res,
+      "CV uploaded successfully",
+      uploadCV
+    );
   } catch (error) {
     console.error("Upload CV failed", error);
 

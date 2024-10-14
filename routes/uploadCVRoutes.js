@@ -9,11 +9,13 @@ const {
   toggleCVDelete
 } = require('../controllers/uploadCVController');
 const authenticateToken = require('../middleware/auth');
-const sendEmail = require('../middleware/nodemailer');
 
 const router = express.Router();
 
-router.post('/create-uploadcv', upload.single('cv'), validateUploadCV, addUploadCV, sendEmail);
+// Removed `sendEmail` from the POST route
+router.post('/create-uploadcv', upload.single('cv'), validateUploadCV, addUploadCV);
+
+// Other routes remain unchanged
 router.put('/update-uploadcv/:id', upload.single('cv'), authenticateToken, validateUploadCV, validateUploadCVId, updateUploadCV);
 router.get('/find-uploadcv', authenticateToken, getUploadCVs);
 router.put('/isactive-uploadcv/:id', authenticateToken, validateUploadCVId, toggleCVStatus);
