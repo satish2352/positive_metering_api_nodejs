@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     let data = file.originalname;
     let updatedData = data.replace(/\s+/g, "-");
     console.log("file.originalname", updatedData);
-    cb(null, `${Date.now()}-${updatedData}`);
+    cb(null, updatedData);
   },
 });
 
