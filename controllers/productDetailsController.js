@@ -42,7 +42,7 @@ const apiResponse = require('../helper/apiResponse');
 exports.addProductDetails = async (req, res) => {
   try {
     console.log(req.body); // Log the body to check the incoming data
-    const { productName, application } = req.body;
+    const { productName, slug, application } = req.body;
     const images = req.files ? req.files.map(file => file.path) : [];
 
     // Create the product details entry
