@@ -36,12 +36,16 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  // limits: { fileSize: 1024 * 1024 } // 1MB limit
+  limits: {
+    fieldSize: 25 * 1024 * 1024, // Increase field size limit to 25MB
+  },
 });
 const upload2 = multer({
   storage,
   fileFilter,
-  // limits: { fileSize: 1024 * 1024 } // 1MB limit
+  limits: {
+    fieldSize: 25 * 1024 * 1024, // Increase field size limit to 25MB
+  },
 }).array('img', 5); 
 // Custom middleware to check file size after upload
 const validateImageSize = (req, res, next) => {

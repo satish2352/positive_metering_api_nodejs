@@ -1,16 +1,50 @@
 const BlogDetail = require("../models/BlogDetail");
 const apiResponse = require("../helper/apiResponse");
-
+const fs = require("fs");
+const path = require("path");
 exports.addBlogDetail = async (req, res) => {
   try {
     const { title, shortDesc, longDesc } = req.body;
     const img = req.file ? req.file.path : null;
+    const processBase64Images = (htmlContent) => {
+      return htmlContent.replace(
+        /<img[^>]+src=["'](data:image\/(png|jpeg|jpg|gif);base64,([^"']+))["'][^>]*>/g,
+        (match, fullData, ext, base64Data) => {
+          try {
+            // Convert base64 to buffer
+            const buffer = Buffer.from(base64Data, "base64");
+
+            // Generate unique filename
+            const filename = `image_${Date.now()}.${ext}`;
+            const filePath = path.join(
+              __dirname,
+              "../uploads/blogdetails",
+              filename
+            );
+
+            // Save the file
+            fs.writeFileSync(filePath, buffer);
+
+            // Return new img tag with file path
+
+            return `<div style="text-align: center;">
+            <img src="${process.env.SERVER_PATH}uploads/blogDetails/${filename}" alt="blog image" width="50%" height="auto"/>
+        </div>`;
+          } catch (error) {
+            console.error("Error processing base64 image:", error);
+            return match; // Return original if error occurs
+          }
+        }
+      );
+    };
+
+    const updatedLongDesc = processBase64Images(longDesc);
 
     const blogDetail = await BlogDetail.create({
       img,
       title,
       shortDesc,
-      longDesc,
+      longDesc: updatedLongDesc,
       isActive: true,
       isDelete: false,
     });
@@ -37,10 +71,44 @@ exports.updateBlogDetail = async (req, res) => {
       return apiResponse.notFoundResponse(res, "Blog detail not found");
     }
 
+    const processBase64Images = (htmlContent) => {
+      return htmlContent.replace(
+        /<img[^>]+src=["'](data:image\/(png|jpeg|jpg|gif);base64,([^"']+))["'][^>]*>/g,
+        (match, fullData, ext, base64Data) => {
+          try {
+            // Convert base64 to buffer
+            const buffer = Buffer.from(base64Data, "base64");
+
+            // Generate unique filename
+            const filename = `image_${Date.now()}.${ext}`;
+            const filePath = path.join(
+              __dirname,
+              "../uploads/blogdetails",
+              filename
+            );
+
+            // Save the file
+            fs.writeFileSync(filePath, buffer);
+
+            // Return new img tag with file path
+
+            return `<div style="text-align: center;">
+            <img src="${process.env.SERVER_PATH}/uploads/blogDetails/${filename}" alt="blog image" width="50%" height="auto"/>
+        </div>`;
+          } catch (error) {
+            console.error("Error processing base64 image:", error);
+            return match; // Return original if error occurs
+          }
+        }
+      );
+    };
+
+    const updatedLongDesc = processBase64Images(longDesc);
+
     blogDetail.img = img || blogDetail.img;
     blogDetail.title = title;
     blogDetail.shortDesc = shortDesc;
-    blogDetail.longDesc = longDesc;
+    blogDetail.longDesc = updatedLongDesc;
     await blogDetail.save();
 
     return apiResponse.successResponseWithData(
@@ -53,7 +121,6 @@ exports.updateBlogDetail = async (req, res) => {
     return apiResponse.ErrorResponse(res, "Update blog details failed");
   }
 };
-
 
 exports.getBlogDetails = async (req, res) => {
   try {
@@ -79,7 +146,6 @@ exports.getBlogDetails = async (req, res) => {
     return apiResponse.ErrorResponse(res, "Get blogDetails failed");
   }
 };
-
 
 exports.isActiveStatus = async (req, res) => {
   try {
