@@ -28,7 +28,7 @@ exports.addBlogDetail = async (req, res) => {
             // Return new img tag with file path
 
             return `<div style="text-align: center;">
-            <img src="${process.env.SERVER_PATH}uploads/blogDetails/${filename}" alt="blog image" width="50%" height="auto"/>
+            <img src="${process.env.SERVER_PATH}uploads/blogdetails/${filename}" alt="blog image" width="50%" height="auto"/>
         </div>`;
           } catch (error) {
             console.error("Error processing base64 image:", error);
@@ -93,7 +93,7 @@ exports.updateBlogDetail = async (req, res) => {
             // Return new img tag with file path
 
             return `<div style="text-align: center;">
-            <img src="${process.env.SERVER_PATH}/uploads/blogDetails/${filename}" alt="blog image" width="50%" height="auto"/>
+            <img src="${process.env.SERVER_PATH}/uploads/blogdetails/${filename}" alt="blog image" width="50%" height="auto"/>
         </div>`;
           } catch (error) {
             console.error("Error processing base64 image:", error);
