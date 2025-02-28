@@ -198,3 +198,57 @@ exports.isDeleteStatus = async (req, res) => {
     );
   }
 };
+
+
+exports.getBlogMeta = async (req, res) => {
+  try {
+    const { id } = req.body; // Get blog ID from request body
+
+    if (!id) {
+      return apiResponse.validationError(res, "Blog ID is required");
+    }
+
+    // Fetch blog details from the database
+    const blogDetail = await BlogDetail.findOne({
+      where: { id, isDelete: false, isActive: true },
+    });
+
+    if (!blogDetail) {
+      return apiResponse.notFoundResponse(res, "Blog not found");
+    }
+
+    // Construct full image URL
+    const urlTitle = blogDetail.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    const baseUrl = `${process.env.SERVER_PATH}`;
+    const imageUrl = blogDetail.img ? baseUrl + blogDetail.img.replace(/\\/g, "/") : null;
+    const blogUrl = `https://seohelmet.sumagodemo.com/blogdetails/${urlTitle}`;
+
+    // Generate dynamic Open Graph meta tags
+    const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${blogDetail.title}</title>
+            <meta property="og:title" content="${blogDetail.title}" />
+            <meta property="og:description" content="${blogDetail.shortDesc}" />
+            <meta property="og:image" content="${imageUrl}" />
+            <meta property="og:url" content="${blogUrl}" />
+            <meta property="og:type" content="article" />
+
+            <!-- Redirect after WhatsApp fetches meta tags -->
+            <meta http-equiv="refresh" content="1;url=${blogUrl}" />
+        </head>
+        <body>
+            <h1>Redirecting to ${blogDetail.title}...</h1>
+        </body>
+        </html>
+    `;
+
+    return res.send(html);
+  } catch (error) {
+    console.error("Error fetching blog meta:", error);
+    return apiResponse.ErrorResponse(res, "Failed to generate blog metadata");
+  }
+};
