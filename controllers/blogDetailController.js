@@ -255,53 +255,61 @@ exports.isDeleteStatus = async (req, res) => {
 // };
 exports.getBlogMeta = async (req, res) => {
   try {
-    const { id } = req.params; // Get blog ID from URL
+    const { id } = req.params; // Fetch the blog ID from request params
 
     if (!id) {
-      return apiResponse.validationError(res, "Blog ID is required");
+      return res.status(400).json({ message: "Blog ID is required" });
     }
 
+    // Fetch blog details from the database
     const blogDetail = await BlogDetail.findOne({
       where: { id, isDelete: false, isActive: true },
     });
 
     if (!blogDetail) {
-      return apiResponse.notFoundResponse(res, "Blog not found");
+      return res.status(404).json({ message: "Blog not found" });
     }
 
-    // Generate blog URL and image path
-    const urlTitle = blogDetail.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-    const baseUrl = process.env.SERVER_PATH;
-    const imageUrl = blogDetail.img ? `${baseUrl}${blogDetail.img.replace(/\\/g, "/")}` : null;
+    // Generate URLs for images and blog link
+    const baseUrl = process.env.SERVER_PATH || ""; // Fallback to empty string if undefined
+    const imageUrl = blogDetail.img
+      ? baseUrl + blogDetail.img.replace(/\\/g, "/") // Ensure proper URL formatting
+      : "https://seohelmet.sumagodemo.com/default-image.jpg"; // Provide a default image
+
+    const urlTitle = blogDetail.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-") // Replace spaces & special characters with hyphens
+      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+
     const blogUrl = `https://seohelmet.sumagodemo.com/blogdetails/${urlTitle}`;
 
-    console.log("imageUrl", imageUrl);
+    // Serve an HTML page with Open Graph meta tags for proper social sharing
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${blogDetail.title}</title>
+          <meta property="og:title" content="${blogDetail.title}" />
+          <meta property="og:description" content="${blogDetail.shortDesc}" />
+          <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:url" content="${blogUrl}" />
+          <meta property="og:type" content="article" />
+          <meta name="twitter:card" content="summary_large_image" />
+      </head>
+      <body>
+          <h1>${blogDetail.title}</h1>
+          <p>${blogDetail.shortDesc}</p>
+          <img src="${imageUrl}" alt="${blogDetail.title}" width="100%" />
+      </body>
+      </html>
+    `;
 
-    // Return HTML with Open Graph meta tags
-    res.set("Content-Type", "text/html");
-    return res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${blogDetail.title}</title>
-            <meta property="og:title" content="${blogDetail.title}" />
-            <meta property="og:description" content="${blogDetail.shortDesc}" />
-            <meta property="og:image" content="${imageUrl}" />
-            <meta property="og:url" content="${blogUrl}" />
-            <meta property="og:type" content="article" />
-        </head>
-        <body>
-            <h1>${blogDetail.title}</h1>
-            <p>${blogDetail.shortDesc}</p>
-            <img src="${imageUrl}" alt="Blog Image" style="max-width:100%;">
-            <p>Read more: <a href="${blogUrl}">${blogUrl}</a></p>
-        </body>
-        </html>
-    `);
+    return res.send(html);
   } catch (error) {
     console.error("Error fetching blog meta:", error);
-    return apiResponse.ErrorResponse(res, "Failed to generate blog metadata");
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
