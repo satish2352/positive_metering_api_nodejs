@@ -14,14 +14,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Use Prerender **only for `/blogdetails` route**
-app.use((req, res, next) => {
-  if (req.url.startsWith("/blogdetails/")) {
-    prerender(req, res, next);
-  } else {
-    next();
-  }
-});
+// Enable Prerender.io for dynamic blog pages only
+app.use(prerender.whitelisted(['/blogdetails/*']));
 
 // const corsOptions = {
 //   origin: ['*'],
