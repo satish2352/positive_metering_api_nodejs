@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const fs = require("fs");
 const path = require("path");
+// @ts-ignore
+const prerender = require("prerender-node");
 const port = process.env.PORT || 8000;
 const cors = require("cors");
 app.use((req, res, next) => {
@@ -10,6 +12,15 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
+});
+
+// ✅ Use Prerender **only for `/blogdetails` route**
+app.use((req, res, next) => {
+  if (req.url.startsWith("/blogdetails/")) {
+    prerender(req, res, next);
+  } else {
+    next();
+  }
 });
 
 // const corsOptions = {
@@ -28,6 +39,9 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
+prerender.set("prerenderToken", "t3OCVoEzKqeFK7FdrYEn"); // Replace with your Prerender.io token
+prerender.set("protocol", "https"); // Ensure correct protocol
+app.use(prerender);
 
 app.use("/uploads", express.static("uploads"));
 
