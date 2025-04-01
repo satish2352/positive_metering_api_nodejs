@@ -3,7 +3,7 @@ const apiResponse = require("../helper/apiResponse");
 
 exports.addSocialContact = async (req, res) => {
   try {
-    const { instagram, facebook, email, whatsapp, linkedin } = req.body;
+    const { instagram, facebook, email, whatsapp, linkedin, youtube } = req.body;
     const socialContact = await SocialContact.create({
       instagram,
       facebook,
@@ -11,6 +11,7 @@ exports.addSocialContact = async (req, res) => {
       whatsapp,
       linkedin,
       twitter,
+      youtube,
       isActive: true,
       isDelete: false,
     });
@@ -40,6 +41,7 @@ exports.updateSocialContact = async (req, res) => {
     socialContact.twitter = req.body.twitter;
     socialContact.whatsapp = req.body.whatsapp;
     socialContact.linkedin = req.body.linkedin;
+    socialContact.youtube = req.body.youtube;
     await socialContact.save();
     
     return apiResponse.successResponseWithData(

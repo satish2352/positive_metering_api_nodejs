@@ -26,6 +26,10 @@ const SocialContact = sequelize.define("SocialContact", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  youtube: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
