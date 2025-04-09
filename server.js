@@ -5,12 +5,17 @@ const fs = require("fs");
 const path = require("path");
 const port = process.env.PORT || 8000;
 const cors = require("cors");
+const prerender = require('prerender-node');
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
+prerender.set('prerenderToken', 'xrKzS0mH7QtEJ7KTHY4O'); // Replace with your real token
+app.use(prerender);
+app.use(express.static('build'));
 
 // const corsOptions = {
 //   origin: ['*'],
