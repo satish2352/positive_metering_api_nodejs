@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 // File filter to only allow certain image types
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname);
-  if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg' && ext !== '.mp4' && ext !== '.avi' && ext !== '.mov') {
+  if (ext !== '.png' && ext !== '.jpg' && ext !== '.webp' && ext !== '.jpeg' && ext !== '.mp4' && ext !== '.avi' && ext !== '.mov') {
     return cb(new Error('Only media files are allowed'), false);
   }
   cb(null, true);

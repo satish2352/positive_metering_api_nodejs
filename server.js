@@ -106,7 +106,6 @@ app.use('/productImages', productImagesRouter);
 const testDbConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log("Database connected...");
     await sequelize.sync(); // Ensure the database and model are in sync
   } catch (err) {
     console.error("Error: " + err);
