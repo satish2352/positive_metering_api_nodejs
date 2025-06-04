@@ -12,27 +12,26 @@ exports.addTeamMember = async (req, res) => {
   }
 
   const transaction = await sequelize.transaction();
-  
+
   try {
-    const { name, designation, description, position_no } = req.body;
+    const { name, designation, description } = req.body;
     const img = req.file ? req.file.path : null;
 
-    // Increment positions of existing members
-    await Team.update(
-      { position_no: Sequelize.literal('position_no + 1') },
-      { 
-        where: { position_no: { [Sequelize.Op.gte]: position_no }, isDelete: false },
-        transaction
-      }
-    );
+    // ✅ Find max position_no
+    const maxPosition = await Team.max('position_no', {
+      where: { isDelete: false },
+      transaction,
+    });
 
-    // Create the new team member
-    const teamMember = await Team.create({
+    const newPosition = (maxPosition || 0) + 1; // If null, use 1
+
+    // ✅ Create the new member at the last position
+    const newMember = await Team.create({
       img,
       name,
       designation,
       description,
-      position_no,
+      position_no: newPosition,
       isActive: true,
       isDelete: false,
     }, { transaction });
@@ -41,8 +40,8 @@ exports.addTeamMember = async (req, res) => {
 
     return apiResponse.successResponseWithData(
       res,
-      'Team member added successfully',
-      teamMember
+      'Team member added successfully at the end',
+      newMember
     );
   } catch (error) {
     await transaction.rollback();
@@ -67,39 +66,50 @@ exports.updateTeamMember = async (req, res) => {
     const { name, designation, description, position_no } = req.body;
     const img = req.file ? req.file.path : null;
 
-    // Find the team member
-    const teamMember = await Team.findByPk(id);
-    if (!teamMember) {
+    // ✅ Step 1: Fetch current team member
+    const member = await Team.findOne({
+      where: { id, isDelete: false },
+      transaction,
+    });
+
+    if (!member) {
       await transaction.rollback();
-      return apiResponse.notFoundResponse(res, 'Team member not found');
+      return apiResponse.ErrorResponse(res, 'Team member not found');
     }
 
-    // Adjust positions only if the position_no has changed
-    if (teamMember.position_no !== position_no) {
-      if (position_no < teamMember.position_no) {
-        // Increment positions of records shifting down
-        await Team.update(
-          { position_no: Sequelize.literal('position_no + 1') },
-          {
-            where: {
-              position_no: {
-                [Sequelize.Op.between]: [position_no, teamMember.position_no - 1],
-              },
-              isDelete: false,
-            },
-            transaction
-          }
-        );
-      } else {
-        // Decrement positions of records shifting up
+    const oldPosition = member.position_no;
+    const newPosition = parseInt(position_no);
+
+    // ✅ Step 2: If position is changed, shift others accordingly
+    if (oldPosition !== newPosition) {
+      if (newPosition > oldPosition) {
+        // Moving down: shift affected rows up
         await Team.update(
           { position_no: Sequelize.literal('position_no - 1') },
           {
             where: {
               position_no: {
-                [Sequelize.Op.between]: [teamMember.position_no + 1, position_no],
+                [Sequelize.Op.gt]: oldPosition,
+                [Sequelize.Op.lte]: newPosition
               },
-              isDelete: false,
+              id: { [Sequelize.Op.ne]: id },
+              isDelete: false
+            },
+            transaction
+          }
+        );
+      } else {
+        // Moving up: shift affected rows down
+        await Team.update(
+          { position_no: Sequelize.literal('position_no + 1') },
+          {
+            where: {
+              position_no: {
+                [Sequelize.Op.gte]: newPosition,
+                [Sequelize.Op.lt]: oldPosition
+              },
+              id: { [Sequelize.Op.ne]: id },
+              isDelete: false
             },
             transaction
           }
@@ -107,20 +117,21 @@ exports.updateTeamMember = async (req, res) => {
       }
     }
 
-    // Update the team member
-    teamMember.img = img || teamMember.img;
-    teamMember.name = name;
-    teamMember.designation = designation;
-    teamMember.description = description;
-    teamMember.position_no = position_no;
-    await teamMember.save({ transaction });
+    // ✅ Step 3: Update the member
+    await member.update({
+      name,
+      designation,
+      description,
+      position_no: newPosition,
+      img: img || member.img
+    }, { transaction });
 
     await transaction.commit();
 
     return apiResponse.successResponseWithData(
       res,
       'Team member updated successfully',
-      teamMember
+      member
     );
   } catch (error) {
     await transaction.rollback();
