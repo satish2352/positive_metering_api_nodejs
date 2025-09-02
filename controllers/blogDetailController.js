@@ -2,6 +2,29 @@ const BlogDetail = require("../models/BlogDetail");
 const apiResponse = require("../helper/apiResponse");
 const fs = require("fs");
 const path = require("path");
+
+// function generateSlug(title) {
+//   return title
+//     .toString()                  // ensure string
+//     .toLowerCase()               // convert to lowercase
+//     .trim()                      // remove leading/trailing spaces
+//     .replace(/["'“”‘’]/g, "")    // remove quotes
+//     .replace(/[^a-z0-9\s-]/g, "")// remove everything except a-z, 0-9, space, -
+//     .replace(/\s+/g, "-")        // replace spaces with -
+//     .replace(/-+/g, "-")         // collapse multiple -
+//     .replace(/^-+|-+$/g, "");    // remove leading/trailing -
+// }
+function generateSlug(title) {
+  return title
+    .toString()                  // ensure string
+    .toLowerCase()               // convert to lowercase
+    .trim()                      // remove leading/trailing spaces
+    .replace(/[^a-z0-9\s]/g, "") // remove everything except letters, numbers, spaces
+    .replace(/\s+/g, "-")        // replace spaces with -
+    .replace(/-+/g, "-")         // collapse multiple -
+    .replace(/^-+|-+$/g, "");    // remove leading/trailing -
+}
+
 exports.addBlogDetail = async (req, res) => {
   try {
     const { title, shortDesc, longDesc } = req.body;
@@ -40,9 +63,12 @@ exports.addBlogDetail = async (req, res) => {
 
     const updatedLongDesc = processBase64Images(longDesc);
 
+    let slug = generateSlug(title)
+
     const blogDetail = await BlogDetail.create({
       img,
       title,
+      slug,
       shortDesc,
       longDesc: updatedLongDesc,
       isActive: true,
@@ -105,8 +131,11 @@ exports.updateBlogDetail = async (req, res) => {
 
     const updatedLongDesc = processBase64Images(longDesc);
 
+    let slug = generateSlug(title)
+
     blogDetail.img = img || blogDetail.img;
     blogDetail.title = title;
+    blogDetail.slug = slug;
     blogDetail.shortDesc = shortDesc;
     blogDetail.longDesc = updatedLongDesc;
     await blogDetail.save();
@@ -196,5 +225,94 @@ exports.isDeleteStatus = async (req, res) => {
       res,
       "Toggle blog detail delete status failed"
     );
+  }
+};
+
+
+function isBot(userAgent) {
+  const bots = [
+    "facebookexternalhit",
+    "twitterbot",
+    "linkedinbot",
+    "whatsapp",
+    "discordbot",
+    "googlebot"
+  ];
+  return bots.some(bot => userAgent.toLowerCase().includes(bot.toLowerCase()));
+}
+
+exports.getBlogPage = async (req, res) => {
+  try {
+    const { slug } = req.params;        // Get blog ID
+    const userAgent = req.headers["user-agent"] || "";
+
+    // Fetch blog by ID
+    const blog = await BlogDetail.findOne({ where: { slug } });
+    if (!blog) {
+      // Always return 200 to bots to avoid scraping errors
+      if (isBot(userAgent)) {
+        return res.status(200).send(`
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <title>Blog Not Found</title>
+              <meta name="description" content="This blog is not available." />
+            </head>
+            <body>
+              <h1>Blog Not Found</h1>
+              <p>The requested blog does not exist.</p>
+            </body>
+          </html>
+        `);
+      }
+      // For humans, redirect to main blog page
+      return res.redirect("https://positivemetering.in/blogdetails");
+    }
+
+    if (isBot(userAgent)) {
+      // Bot request → send Open Graph meta tags
+      return res.status(200).send(`
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <title>${blog.title}</title>
+            <meta name="description" content="${blog.shortDesc}" />
+
+            <!-- Open Graph -->
+            <meta property="og:title" content="${blog.title}" />
+            <meta property="og:description" content="${blog.shortDesc}" />
+            <meta property="og:image" content="${process.env.SERVER_PATH}${blog.img}" />
+            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${slug}" />
+          </head>
+          <body>
+            <h1>${blog.title}</h1>
+            <p>Preview for bots only. Visit site for full blog.</p>
+          </body>
+        </html>
+      `);
+    }
+
+    // Normal user → redirect to frontend slug URL
+    const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
+    return res.redirect(`https://positivemetering.in/blogdetails/${blogSlug}`);
+
+  } catch (err) {
+    console.error("Error generating blog page:", err);
+    // Return 200 HTML with error message for bots to prevent 500 errors
+    return res.status(200).send(`
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Error</title>
+          <meta name="description" content="Error loading blog preview." />
+        </head>
+        <body>
+          <h1>Error loading blog preview</h1>
+        </body>
+      </html>
+    `);
   }
 };

@@ -18,6 +18,11 @@ const BlogDetail = sequelize.define('BlogDetail', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  slug: { // 👈 New field
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true,
+  },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,

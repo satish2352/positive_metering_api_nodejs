@@ -6,6 +6,7 @@ const {
   getBlogDetails,
   isActiveStatus,
   isDeleteStatus,
+  getBlogPage,
 } = require('../controllers/blogDetailController');
 const authenticateToken = require('../middleware/auth');
 
@@ -17,5 +18,5 @@ router.get('/get-blogdetails', getBlogDetails);
 router.get('/find-blogdetails',authenticateToken, getBlogDetails);
 router.put('/isactive-blogdetail/:id', authenticateToken, isActiveStatus);
 router.delete ('/isdelete-blogdetail/:id', authenticateToken, isDeleteStatus);
-
+router.get("/blog/:slug", getBlogPage);
 module.exports = router;
