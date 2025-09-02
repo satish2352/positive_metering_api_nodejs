@@ -253,7 +253,7 @@ exports.getBlogPage = async (req, res) => {
     }
     cleanSlug = slug.replace(/=com$/, "").replace(/=in$/, "");
     const userAgent = req.headers["user-agent"] || "";
-    const blog = await BlogDetail.findOne({ where: { slug } });
+    const blog = await BlogDetail.findOne({ where: { cleanSlug } });
     if (!blog) {
       // Always return 200 to bots to avoid scraping errors
       if (isBot(userAgent)) {
@@ -290,7 +290,7 @@ exports.getBlogPage = async (req, res) => {
             <meta property="og:title" content="${blog.title}" />
             <meta property="og:description" content="${blog.shortDesc}" />
             <meta property="og:image" content="${process.env.SERVER_PATH}${blog.img}" />
-            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${slug}" />
+            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${cleanSlug}" />
           </head>
           <body>
             <h1>${blog.title}</h1>
@@ -302,7 +302,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`${frontendDomain}blogdetails/${blogSlug}`);
+    return res.redirect(`${frontendDomain}blogdetails/${cleanSlug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
