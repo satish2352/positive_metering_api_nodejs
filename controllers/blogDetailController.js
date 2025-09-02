@@ -245,7 +245,8 @@ exports.getBlogPage = async (req, res) => {
   try {
     const { slug } = req.params;        // Get blog ID
     const userAgent = req.headers["user-agent"] || "";
-
+    const origin = req.headers["origin"] || "";
+    console.log("origin", origin);
     // Fetch blog by ID
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
