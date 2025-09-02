@@ -243,18 +243,10 @@ function isBot(userAgent) {
 
 exports.getBlogPage = async (req, res) => {
   try {
-    const { slug } = req.params; 
-    let frontendDomain
-    let cleanSlug
-    if (slug.endsWith("=com")) {
-      frontendDomain = "https://positivemetering.com/";
-    }else if(slug.endsWith("=in")){
-      frontendDomain = "https://positivemetering.in/";
-    }
-    cleanSlug = slug.replace(/=com$/, "").replace(/=in$/, "");
-    console.log("cleanSlugcleanSlug", cleanSlug);
+    const { slug } = req.params;        // Get blog ID
     const userAgent = req.headers["user-agent"] || "";
-    const blog = await BlogDetail.findOne({ where: { cleanSlug } });
+    console.log("userAgentuserAgentuserAgentuserAgent", req);
+    const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
       // Always return 200 to bots to avoid scraping errors
       if (isBot(userAgent)) {
@@ -274,7 +266,7 @@ exports.getBlogPage = async (req, res) => {
         `);
       }
       // For humans, redirect to main blog page
-      return res.redirect(`${frontendDomain}blogdetails`);
+      return res.redirect("https://positivemetering.in/blogdetails");
     }
 
     if (isBot(userAgent)) {
@@ -291,7 +283,7 @@ exports.getBlogPage = async (req, res) => {
             <meta property="og:title" content="${blog.title}" />
             <meta property="og:description" content="${blog.shortDesc}" />
             <meta property="og:image" content="${process.env.SERVER_PATH}${blog.img}" />
-            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${blog.slug}" />
+            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${slug}" />
           </head>
           <body>
             <h1>${blog.title}</h1>
@@ -303,7 +295,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`${frontendDomain}blogdetails/${blog.slug}`);
+    return res.redirect(`https://positivemetering.in/blogdetails/${blogSlug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
