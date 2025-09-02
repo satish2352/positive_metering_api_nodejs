@@ -252,6 +252,7 @@ exports.getBlogPage = async (req, res) => {
       frontendDomain = "https://positivemetering.in/";
     }
     cleanSlug = slug.replace(/=com$/, "").replace(/=in$/, "");
+    console.log("cleanSlugcleanSlug", cleanSlug);
     const userAgent = req.headers["user-agent"] || "";
     const blog = await BlogDetail.findOne({ where: { cleanSlug } });
     if (!blog) {
@@ -290,7 +291,7 @@ exports.getBlogPage = async (req, res) => {
             <meta property="og:title" content="${blog.title}" />
             <meta property="og:description" content="${blog.shortDesc}" />
             <meta property="og:image" content="${process.env.SERVER_PATH}${blog.img}" />
-            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${cleanSlug}" />
+            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${blog.slug}" />
           </head>
           <body>
             <h1>${blog.title}</h1>
@@ -302,7 +303,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`${frontendDomain}blogdetails/${cleanSlug}`);
+    return res.redirect(`${frontendDomain}blogdetails/${blog.slug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
