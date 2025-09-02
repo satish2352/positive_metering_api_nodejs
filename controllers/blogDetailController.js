@@ -253,9 +253,7 @@ exports.getBlogPage = async (req, res) => {
       frontendDomain = "https://positivemetering.in/";
     }
     slug = slug.replace(/=com$/, "").replace(/=in$/, "");
-    console.log("frontend", frontend);
     const userAgent = req.headers["user-agent"] || "";
-    console.log("userAgentuserAgentuserAgentuserAgent", req);
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
       // Always return 200 to bots to avoid scraping errors
