@@ -243,8 +243,16 @@ function isBot(userAgent) {
 
 exports.getBlogPage = async (req, res) => {
   try {
-    const { slug } = req.params;        // Get blog ID
-    const { frontend } = req.query; 
+    const { slug } = req.params; 
+    let frontendDomain
+    let cleanSlug
+    if (slug.endsWith("=com")) {
+      frontendDomain = "https://positivemetering.com/";
+      cleanSlug = ""
+    }else if(slug.endsWith("=in")){
+      frontendDomain = "https://positivemetering.in/";
+    }
+    slug = slug.replace(/=com$/, "").replace(/=in$/, "");
     console.log("frontend", frontend);
     const userAgent = req.headers["user-agent"] || "";
     console.log("userAgentuserAgentuserAgentuserAgent", req);
@@ -268,7 +276,7 @@ exports.getBlogPage = async (req, res) => {
         `);
       }
       // For humans, redirect to main blog page
-      return res.redirect("https://positivemetering.in/blogdetails");
+      return res.redirect(`${frontendDomain}blogdetails`);
     }
 
     if (isBot(userAgent)) {
@@ -297,7 +305,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`https://positivemetering.in/blogdetails/${blogSlug}`);
+    return res.redirect(`${frontendDomain}blogdetails/${blogSlug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
