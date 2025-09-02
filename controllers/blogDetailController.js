@@ -245,8 +245,6 @@ exports.getBlogPage = async (req, res) => {
   try {
     const { slug } = req.params;        // Get blog ID
     const userAgent = req.headers["user-agent"] || "";
-    console.log("userAgent====>", userAgent);
-    // Fetch blog by ID
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
       // Always return 200 to bots to avoid scraping errors
