@@ -248,11 +248,10 @@ exports.getBlogPage = async (req, res) => {
     let cleanSlug
     if (slug.endsWith("=com")) {
       frontendDomain = "https://positivemetering.com/";
-      cleanSlug = ""
     }else if(slug.endsWith("=in")){
       frontendDomain = "https://positivemetering.in/";
     }
-    slug = slug.replace(/=com$/, "").replace(/=in$/, "");
+    cleanSlug = slug.replace(/=com$/, "").replace(/=in$/, "");
     const userAgent = req.headers["user-agent"] || "";
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
