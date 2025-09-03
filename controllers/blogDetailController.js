@@ -243,11 +243,12 @@ function isBot(userAgent) {
 
 exports.getBlogPage = async (req, res) => {
   try {
-    const { slug, source } = req.params;
+    const { slug } = req.params;        // Get blog ID
     const userAgent = req.headers["user-agent"] || "";
+
+    // Fetch blog by ID
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
-      console.log("no !blog");
       // Always return 200 to bots to avoid scraping errors
       if (isBot(userAgent)) {
         return res.status(200).send(`
@@ -266,11 +267,10 @@ exports.getBlogPage = async (req, res) => {
         `);
       }
       // For humans, redirect to main blog page
-      return res.redirect("https://positivemetering.com/blogdetails");
+      return res.redirect("https://positivemetering.ae/blogdetails");
     }
 
     if (isBot(userAgent)) {
-      console.log("in bot");
       // Bot request → send Open Graph meta tags
       return res.status(200).send(`
         <!DOCTYPE html>
@@ -284,7 +284,7 @@ exports.getBlogPage = async (req, res) => {
             <meta property="og:title" content="${blog.title}" />
             <meta property="og:description" content="${blog.shortDesc}" />
             <meta property="og:image" content="${process.env.SERVER_PATH}${blog.img}" />
-            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${blog.slug}" />
+            <meta property="og:url" content="https://positive-backend.sumagodemo.com/blogdetails/blog/${slug}" />
           </head>
           <body>
             <h1>${blog.title}</h1>
@@ -292,14 +292,11 @@ exports.getBlogPage = async (req, res) => {
           </body>
         </html>
       `);
-      console.log("in bot11");
     }
 
     // Normal user → redirect to frontend slug URL
-    // const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    console.log("blogSlugblogSlug===>", blog.slug);
-    console.log("source source===>", source);
-    return res.redirect(`https://positivemetering.com/blogdetails/${blog.slug}/${source}`);
+    const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
+    return res.redirect(`http://localhost:3000/blogdetails/${blogSlug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
