@@ -270,6 +270,11 @@ exports.getBlogPage = async (req, res) => {
       return res.redirect("https://positivemetering.ae/blogdetails");
     }
     console.log("on line no 272");
+    console.log("blog.title", blog.title);
+    console.log("blog.shortDesc", blog.shortDesc);
+    console.log("process.env.SERVER_PATH", process.env.SERVER_PATH);
+    console.log("blog.img", blog.img);
+    console.log("slug_", slug);
     if (isBot(userAgent)) {
       // Bot request → send Open Graph meta tags
       return res.status(200).send(`
@@ -295,7 +300,6 @@ exports.getBlogPage = async (req, res) => {
     }
     console.log("on line no 296");
     // Normal user → redirect to frontend slug URL
-    const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
     return res.redirect(`http://localhost:3000/blogdetails/${blog.slug}`);
 
   } catch (err) {
