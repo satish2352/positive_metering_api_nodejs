@@ -244,6 +244,7 @@ function isBot(userAgent) {
 exports.getBlogPage = async (req, res) => {
   try {
     const { slug, source } = req.params;
+    console.log("slugslugslug", slug);
     console.log("sourcesource", source);
     const userAgent = req.headers["user-agent"] || "";
     const blog = await BlogDetail.findOne({ where: { slug } });
