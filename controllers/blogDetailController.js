@@ -295,6 +295,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
+    console.log("blogSlugblogSlug", blogSlug);
     return res.redirect(`https://positivemetering.com/blogdetails/${blogSlug}`);
 
   } catch (err) {
