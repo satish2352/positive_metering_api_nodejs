@@ -292,6 +292,7 @@ exports.getBlogPage = async (req, res) => {
           </body>
         </html>
       `);
+      console.log("in bot11");
     }
 
     // Normal user → redirect to frontend slug URL
