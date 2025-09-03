@@ -243,7 +243,7 @@ function isBot(userAgent) {
 
 exports.getBlogPage = async (req, res) => {
   try {
-    const { slug } = req.params;
+    const { slug, source } = req.params;
     const userAgent = req.headers["user-agent"] || "";
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
@@ -284,7 +284,7 @@ exports.getBlogPage = async (req, res) => {
             <meta property="og:title" content="${blog.title}" />
             <meta property="og:description" content="${blog.shortDesc}" />
             <meta property="og:image" content="${process.env.SERVER_PATH}${blog.img}" />
-            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${slug}" />
+            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${blog.slug}" />
           </head>
           <body>
             <h1>${blog.title}</h1>
@@ -297,7 +297,8 @@ exports.getBlogPage = async (req, res) => {
     // Normal user → redirect to frontend slug URL
     // const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
     console.log("blogSlugblogSlug===>", blog.slug);
-    return res.redirect(`https://positivemetering.com/blogdetails/${blog.slug}`);
+    console.log("source source===>", source);
+    return res.redirect(`https://positivemetering.com/blogdetails/${blog.slug}/${source}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
