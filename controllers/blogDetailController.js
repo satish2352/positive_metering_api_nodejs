@@ -244,6 +244,7 @@ function isBot(userAgent) {
 exports.getBlogPage = async (req, res) => {
   try {
     const { slug, source } = req.params;
+    console.log("sourcesource", source);
     const userAgent = req.headers["user-agent"] || "";
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
@@ -294,7 +295,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`https://${source == "in" ? "positivemetering.in" : "positivemetering.com"}/blogdetails/${blogSlug} `);
+    return res.redirect(`https://${source == "in" ? "positivemetering.in" : "positivemetering.com"}/blogdetails/${blogSlug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
