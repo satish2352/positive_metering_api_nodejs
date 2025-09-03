@@ -269,7 +269,7 @@ exports.getBlogPage = async (req, res) => {
       // For humans, redirect to main blog page
       return res.redirect("https://positivemetering.ae/blogdetails");
     }
-
+    console.log("on line no 272");
     if (isBot(userAgent)) {
       // Bot request → send Open Graph meta tags
       return res.status(200).send(`
@@ -293,10 +293,10 @@ exports.getBlogPage = async (req, res) => {
         </html>
       `);
     }
-
+    console.log("on line no 296");
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`http://localhost:3000/blogdetails/${blogSlug}`);
+    return res.redirect(`http://localhost:3000/blogdetails/${blog.slug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
