@@ -243,14 +243,21 @@ function isBot(userAgent) {
 
 exports.getBlogPage = async (req, res) => {
   try {
-    const { slug } = req.params;        // Get blog ID
+    const { slug } = req.params;
     const userAgent = req.headers["user-agent"] || "";
 
-    // Fetch blog by ID
+    // Log request source
+    const botRequest = isBot(userAgent);
+    console.log("Incoming request:");
+    console.log("  slug:", slug);
+    console.log("  userAgent:", userAgent);
+    console.log("  isBot?:", botRequest);
+
+    // Fetch blog by slug
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
-      // Always return 200 to bots to avoid scraping errors
-      if (isBot(userAgent)) {
+      if (botRequest) {
+        console.log("Bot requested a non-existent blog");
         return res.status(200).send(`
           <!DOCTYPE html>
           <html lang="en">
@@ -266,17 +273,13 @@ exports.getBlogPage = async (req, res) => {
           </html>
         `);
       }
-      // For humans, redirect to main blog page
+      console.log("Human requested a non-existent blog → redirecting");
       return res.redirect("https://positivemetering.ae/blogdetails");
     }
-    console.log("on line no 272");
-    console.log("blog.title", blog.title);
-    console.log("blog.shortDesc", blog.shortDesc);
-    console.log("process.env.SERVER_PATH", process.env.SERVER_PATH);
-    console.log("blog.img", blog.img);
-    console.log("slug_", slug);
-    if (isBot(userAgent)) {
-      // Bot request → send Open Graph meta tags
+
+    // Case: bot → send OG tags
+    if (botRequest) {
+      console.log("Bot request → sending Open Graph meta tags");
       return res.status(200).send(`
         <!DOCTYPE html>
         <html lang="en">
@@ -298,13 +301,14 @@ exports.getBlogPage = async (req, res) => {
         </html>
       `);
     }
+
+    // Case: human → redirect to frontend
+    console.log("Human request → redirecting to frontend");
     console.log("on line no 296");
-    // Normal user → redirect to frontend slug URL
     return res.redirect(`http://localhost:3000/blogdetails/${blog.slug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
-    // Return 200 HTML with error message for bots to prevent 500 errors
     return res.status(200).send(`
       <!DOCTYPE html>
       <html lang="en">
