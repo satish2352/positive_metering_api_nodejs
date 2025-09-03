@@ -246,8 +246,8 @@ exports.getBlogPage = async (req, res) => {
     const { slug } = req.params;
     const userAgent = req.headers["user-agent"] || "";
     const blog = await BlogDetail.findOne({ where: { slug } });
-    console.log("blog", blog);
     if (!blog) {
+      console.log("no !blog");
       // Always return 200 to bots to avoid scraping errors
       if (isBot(userAgent)) {
         return res.status(200).send(`
@@ -270,6 +270,7 @@ exports.getBlogPage = async (req, res) => {
     }
 
     if (isBot(userAgent)) {
+      console.log("in bot");
       // Bot request → send Open Graph meta tags
       return res.status(200).send(`
         <!DOCTYPE html>
@@ -294,9 +295,9 @@ exports.getBlogPage = async (req, res) => {
     }
 
     // Normal user → redirect to frontend slug URL
-    const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    console.log("blogSlugblogSlug", blogSlug);
-    return res.redirect(`https://positivemetering.com/blogdetails/${blogSlug}`);
+    // const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
+    console.log("blogSlugblogSlug===>", blog.slug);
+    return res.redirect(`https://positivemetering.com/blogdetails/${blog.slug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
