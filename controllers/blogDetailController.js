@@ -228,8 +228,7 @@ exports.isDeleteStatus = async (req, res) => {
   }
 };
 
-
-function isBot(userAgent) {
+function detectBot(userAgent) {
   const bots = [
     "facebookexternalhit",
     "twitterbot",
@@ -238,7 +237,11 @@ function isBot(userAgent) {
     "discordbot",
     "googlebot"
   ];
-  return bots.some(bot => userAgent.toLowerCase().includes(bot.toLowerCase()));
+
+  const lowerUA = userAgent.toLowerCase();
+  const matchedBot = bots.find(bot => lowerUA.includes(bot));
+
+  return matchedBot || null; // return bot name or null
 }
 
 exports.getBlogPage = async (req, res) => {
@@ -246,18 +249,20 @@ exports.getBlogPage = async (req, res) => {
     const { slug } = req.params;
     const userAgent = req.headers["user-agent"] || "";
 
-    // Log request source
-    const botRequest = isBot(userAgent);
+    const botName = detectBot(userAgent);
+
+    // Log every request with more details
     console.log("Incoming request:");
     console.log("  slug:", slug);
     console.log("  userAgent:", userAgent);
-    console.log("  isBot?:", botRequest);
+    console.log("  detected:", botName ? `BOT (${botName})` : "HUMAN");
 
     // Fetch blog by slug
     const blog = await BlogDetail.findOne({ where: { slug } });
+
     if (!blog) {
-      if (botRequest) {
-        console.log("Bot requested a non-existent blog");
+      if (botName) {
+        console.log(`Bot (${botName}) requested a non-existent blog`);
         return res.status(200).send(`
           <!DOCTYPE html>
           <html lang="en">
@@ -278,8 +283,8 @@ exports.getBlogPage = async (req, res) => {
     }
 
     // Case: bot → send OG tags
-    if (botRequest) {
-      console.log("Bot request → sending Open Graph meta tags");
+    if (botName) {
+      console.log(`Bot (${botName}) request → sending Open Graph meta tags`);
       return res.status(200).send(`
         <!DOCTYPE html>
         <html lang="en">
