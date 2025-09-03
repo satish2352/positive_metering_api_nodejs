@@ -244,9 +244,9 @@ function isBot(userAgent) {
 exports.getBlogPage = async (req, res) => {
   try {
     const { slug, source } = req.params;
-    console.log("slugslugslug", slug);
-    console.log("sourcesource", source);
+    
     const userAgent = req.headers["user-agent"] || "";
+    console.log("userAgentuserAgentuserAgentuserAgent", req);
     const blog = await BlogDetail.findOne({ where: { slug } });
     if (!blog) {
       // Always return 200 to bots to avoid scraping errors
@@ -294,31 +294,25 @@ exports.getBlogPage = async (req, res) => {
       `);
     }
 
-    // Always fallback to .com if no source is provided
-    const domain =
-      source === "in"
-        ? "positivemetering.in"
-        : source === "com"
-          ? "positivemetering.com"
-          : "positivemetering.com"; // default
-
-    return res.redirect(`https://${domain}/blogdetails/${slug}`);
+    // Normal user → redirect to frontend slug URL
+    const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
+    return res.redirect(`https://positivemetering.com/blogdetails/${blogSlug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
     // Return 200 HTML with error message for bots to prevent 500 errors
     return res.status(200).send(`
-      < !DOCTYPE html >
-        <html lang="en">
-          <head>
-            <meta charset="UTF-8" />
-            <title>Error</title>
-            <meta name="description" content="Error loading blog preview." />
-          </head>
-          <body>
-            <h1>Error loading blog preview</h1>
-          </body>
-        </html>
-  `);
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Error</title>
+          <meta name="description" content="Error loading blog preview." />
+        </head>
+        <body>
+          <h1>Error loading blog preview</h1>
+        </body>
+      </html>
+    `);
   }
 };
