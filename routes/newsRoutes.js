@@ -6,6 +6,7 @@ const {
   getNewsEvents,
   isActiveStatus,
   isDeleteStatus,
+  getNewsPage,
 } = require('../controllers/newsController');
 const authenticateToken = require('../middleware/auth');
 const {
@@ -20,5 +21,6 @@ router.put('/update-news/:id', uploadFiles, authenticateToken, validateNewsEvent
 router.get('/get-news', getNewsEvents);
 router.put('/isactive-news/:id', authenticateToken, validateNewsEventId, isActiveStatus);
 router.delete('/isdelete-news/:id', authenticateToken, validateNewsEventId, isDeleteStatus);
+router.get("/news/:slug/:source", getNewsPage);
 
 module.exports = router;
