@@ -171,9 +171,9 @@ function isBot(userAgent) {
 
 exports.getNewsPage = async (req, res) => {
   try {
-    const { slug, source } = req.params;        // Get blog ID
+    const { slug, source } = req.params; 
     const userAgent = req.headers["user-agent"] || "";
-
+    console.log("userAgent", userAgent);
     console.log("slug", slug);
     console.log("source", source);
 
@@ -215,7 +215,7 @@ exports.getNewsPage = async (req, res) => {
             <meta property="og:title" content="${news.title}" />
             <meta property="og:description" content="${news.shortDesc}" />
             <meta property="og:image" content="${process.env.SERVER_PATH}${news.img}" />
-            <meta property="og:url" content="${process.env.SERVER_PATH}newevents/news/${slug}" />
+            <meta property="og:url" content="${process.env.SERVER_PATH}news/news/${slug}" />
           </head>
           <body>
             <h1>${news.title}</h1>
