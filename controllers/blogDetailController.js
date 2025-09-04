@@ -19,11 +19,13 @@ function generateSlug(title) {
     .toString()                  // ensure string
     .toLowerCase()               // convert to lowercase
     .trim()                      // remove leading/trailing spaces
-    .replace(/[^a-z0-9\s]/g, "") // remove everything except letters, numbers, spaces
+    .replace(/["'“”‘’]/g, "")    // remove quotes
+    .replace(/[^a-z0-9\s-]/g, "")// remove everything except a-z, 0-9, space, -
     .replace(/\s+/g, "-")        // replace spaces with -
     .replace(/-+/g, "-")         // collapse multiple -
     .replace(/^-+|-+$/g, "");    // remove leading/trailing -
 }
+
 
 exports.addBlogDetail = async (req, res) => {
   try {
@@ -228,7 +230,7 @@ exports.isDeleteStatus = async (req, res) => {
   }
 };
 
-function detectBot(userAgent) {
+function isBot(userAgent) {
   const bots = [
     "facebookexternalhit",
     "twitterbot",
@@ -237,32 +239,22 @@ function detectBot(userAgent) {
     "discordbot",
     "googlebot"
   ];
-
-  const lowerUA = userAgent.toLowerCase();
-  const matchedBot = bots.find(bot => lowerUA.includes(bot));
-
-  return matchedBot || null; // return bot name or null
+  return bots.some(bot => userAgent.toLowerCase().includes(bot.toLowerCase()));
 }
 
 exports.getBlogPage = async (req, res) => {
   try {
-    const { slug } = req.params;
+    const { slug, source } = req.params;        // Get blog ID
     const userAgent = req.headers["user-agent"] || "";
 
-    const botName = detectBot(userAgent);
+    console.log("slug", slug);
+    console.log("source", source);
 
-    // Log every request with more details
-    console.log("Incoming request:");
-    console.log("  slug:", slug);
-    console.log("  userAgent:", userAgent);
-    console.log("  detected:", botName ? `BOT (${botName})` : "HUMAN");
-
-    // Fetch blog by slug
+    // Fetch blog by ID
     const blog = await BlogDetail.findOne({ where: { slug } });
-
     if (!blog) {
-      if (botName) {
-        console.log(`Bot (${botName}) requested a non-existent blog`);
+      // Always return 200 to bots to avoid scraping errors
+      if (isBot(userAgent)) {
         return res.status(200).send(`
           <!DOCTYPE html>
           <html lang="en">
@@ -278,13 +270,12 @@ exports.getBlogPage = async (req, res) => {
           </html>
         `);
       }
-      console.log("Human requested a non-existent blog → redirecting");
-      return res.redirect("https://positivemetering.ae/blogdetails");
+      // For humans, redirect to main blog page
+      return res.redirect("https://positivemetering.com/blogdetails");
     }
 
-    // Case: bot → send OG tags
-    if (botName) {
-      console.log(`Bot (${botName}) request → sending Open Graph meta tags`);
+    if (isBot(userAgent)) {
+      // Bot request → send Open Graph meta tags
       return res.status(200).send(`
         <!DOCTYPE html>
         <html lang="en">
@@ -307,13 +298,13 @@ exports.getBlogPage = async (req, res) => {
       `);
     }
 
-    // Case: human → redirect to frontend
-    console.log("Human request → redirecting to frontend");
-    console.log("on line no 296");
-    return res.redirect(`http://localhost:3000/blogdetails/${blog.slug}`);
+    // Normal user → redirect to frontend slug URL
+    const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
+    return res.redirect(`http://localhost:3000/blogdetails/${blogSlug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
+    // Return 200 HTML with error message for bots to prevent 500 errors
     return res.status(200).send(`
       <!DOCTYPE html>
       <html lang="en">
