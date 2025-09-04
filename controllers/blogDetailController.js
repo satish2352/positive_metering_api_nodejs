@@ -300,7 +300,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`https://${source == "com" ? positivemetering.com : positivemetering.in}/blogdetails/${slug}`);
+    return res.redirect(`https://${source == "com" ? "positivemetering.com" : "positivemetering.in"}/blogdetails/${slug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
