@@ -288,7 +288,7 @@ exports.getBlogPage = async (req, res) => {
             <meta property="og:title" content="${blog.title}" />
             <meta property="og:description" content="${blog.shortDesc}" />
             <meta property="og:image" content="${process.env.SERVER_PATH}${blog.img}" />
-            <meta property="og:url" content="https://positive-backend.sumagodemo.com/blogdetails/blog/${slug}" />
+            <meta property="og:url" content="${process.env.SERVER_PATH}blogdetails/blog/${slug}" />
           </head>
           <body>
             <h1>${blog.title}</h1>
@@ -300,7 +300,7 @@ exports.getBlogPage = async (req, res) => {
 
     // Normal user → redirect to frontend slug URL
     const blogSlug = blog.slug || blog.title.toLowerCase().replace(/\s+/g, '-');
-    return res.redirect(`http://localhost:3000/blogdetails/${blogSlug}`);
+    return res.redirect(`https://positivemetering.com/blogdetails/${slug}`);
 
   } catch (err) {
     console.error("Error generating blog page:", err);
