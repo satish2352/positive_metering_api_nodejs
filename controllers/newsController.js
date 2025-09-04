@@ -173,10 +173,6 @@ exports.getNewsPage = async (req, res) => {
   try {
     const { slug, source } = req.params; 
     const userAgent = req.headers["user-agent"] || "";
-    console.log("userAgent", userAgent);
-    console.log("slug", slug);
-    console.log("source", source);
-
     // Fetch blog by ID
     const news = await NewsEvent.findOne({ where: { slug } });
     if (!news) {
